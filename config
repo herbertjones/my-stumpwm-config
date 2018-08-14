@@ -2,8 +2,6 @@
 
 ;;; TODOs:
 ;;; - mode-line
-;;; - icon tray
-;;; - Terminal
 ;;; - Lock screen
 ;;; - Session management
 ;;;   - Log out
@@ -13,6 +11,7 @@
 
 (in-package :stumpwm)
 (ql:quickload "str")
+(ql:quickload "xembed")
 
 (set-module-dir #P"/home/herbert/opt/stumpwm/contrib/")
 (setf *mode-line-position* :bottom)
@@ -45,6 +44,10 @@
      (defvar ,var (make-sparse-keymap))
      (define-key ,on (kbd ,key) ',var)
      ,var))
+
+(defun string-escape (str)
+  "Escape a string"
+  (format nil "~S" str))
 
 (defcommand xbacklight (args) ((:string "Arguments: "))
             "Run xbacklight"
@@ -150,11 +153,16 @@
             "Run Firefox"
             (run-or-raise "firefox-bin" '(:class "Firefox")))
 
-(defcommand run-terminal () ()
+(defcommand run-named-terminal (name) ((:string "Name: "))
             "Run terminal"
-
-            (let ()
-              (run-or-raise "firefox-bin" `(:class class-name))))
+            (let* ((title (format nil "tmux - ~A" name))
+                   (args (list
+                          "st"
+                          "-t" title ;; Title
+                          "-f" "Source Code Pro"
+                          "-e" "/usr/bin/tmux" "new-session" "-AD" "-s" name))
+                   (cmd (str:join " " (map 'list #'string-escape args))))
+              (run-or-raise cmd `(:title ,title))))
 
 (defcommand run-thunderbird () ()
             "Run Thunderbird"
@@ -162,19 +170,17 @@
 
 (defcommand display-named-emacs (name) ((:string "Name: "))
             "Raise emacs frame with given name"
-            (labels ((escape (str)
-                       (format nil "~S" str)))
-              (let* ((title (format nil "Emacs - ~A" name))
-                     (name-str (format nil "(name . ~S)" title))
-                     (title-str (format nil "(title . ~S)" title))
-                     (form (format nil "(~A ~A)" name-str title-str))
-                     (args (list "/usr/bin/emacsclient" "-c" "-F" (escape form)))
-                     (cmd (str:join " " args)))
-
-                (run-or-raise cmd `(:title ,title)))))
+            (let* ((title (format nil "Emacs - ~A" name))
+                   (name-str (format nil "(name . ~S)" title))
+                   (title-str (format nil "(title . ~S)" title))
+                   (form (format nil "(~A ~A)" name-str title-str))
+                   (args (list "/usr/bin/emacsclient" "-c" "-F" (string-escape form)))
+                   (cmd (str:join " " args)))
+              (run-or-raise cmd `(:title ,title))))
 
 (alist-define-keys (create-map *applications-map* "s-a")
                    '(("f" . "run-firefox")
+                     ("t" . "run-named-terminal main")
                      ("m" . "run-thunderbird")))
 
 (alist-define-keys (create-map *applications-emacs* "e" :on *applications-map*)
