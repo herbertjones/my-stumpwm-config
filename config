@@ -23,7 +23,7 @@
 (load-module "mem")
 (load-module "net")
 (load-module "wifi")
-;; (load-module "stumptray")
+(load-module "stumptray")
 
 (setf *screen-mode-line-format*
       ;; (list "%g | " '(:eval (run-shell-command "date" t)))
@@ -181,3 +181,5 @@
                    '(("e" . "display-named-emacs main")))
 (loop for c across "abcdfghijklmnopqrstuvwxyz0123456789"
    do (define-key *applications-emacs* (kbd (format nil "~C"c)) (format nil "display-named-emacs ~C" c)))
+
+(stumptray:stumptray)
