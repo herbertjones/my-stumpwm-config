@@ -68,7 +68,8 @@
                    '(("f" . "frame-windowlist")
                      ("s-f" . "fother")
                      ("n" . "next-in-frame")
-                     ("p" . "prev-in-frame")))
+                     ("p" . "prev-in-frame")
+                     ("e" . "fclear")))
 
 (alist-define-keys (create-map *window-map* "s-w")
                    '(("h" . "move-focus left")
