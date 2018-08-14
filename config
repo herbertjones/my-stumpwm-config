@@ -1,0 +1,150 @@
+;; -*-lisp-*-
+
+(in-package :stumpwm)
+(ql:quickload "str")
+
+(setf *screen-mode-line-format*
+      ;; (list "%g | " '(:eval (run-shell-command "date" t)))
+      "[^B%n^b] %W")
+
+(setf *mode-line-timeout* 1)
+
+;; (toggle-mode-line (current-screen) (current-head))
+
+(defun alist-define-keys (map alist)
+  "define key using alist."
+  (loop for (key . command) in alist
+     do (define-key map (kbd key) command)))
+
+(defmacro create-map (var key &key (on *top-map*))
+  `(progn
+     (defvar ,var (make-sparse-keymap))
+     (define-key ,on (kbd ,key) ',var)
+     ,var))
+
+(alist-define-keys *top-map*
+                   '(("s-h" . "move-focus left")
+                     ("s-j" . "move-focus down")
+                     ("s-k" . "move-focus up")
+                     ("s-l" . "move-focus right")
+
+                     ("s-H" . "exchange-direction left")
+                     ("s-J" . "exchange-direction down")
+                     ("s-K" . "exchange-direction up")
+                     ("s-L" . "exchange-direction right")
+
+                     ("s-M-H" . "move-window left")
+                     ("s-M-J" . "move-window down")
+                     ("s-M-K" . "move-window up")
+                     ("s-M-L" . "move-window right")
+
+                     ("s-;" . "colon")
+
+                     ("C-TAB" . "next-in-frame")
+                     ("s-TAB" . "fnext")
+                     ;; ("M-TAB" . "next")
+                     ;; ("s-TAB" . "gnext")
+                     ;; ("s-S-TAB" . "pull-hidden-previous")
+
+                     ("s-b" . "mode-line")
+
+                     ("s-r" . "loadrc")
+
+                     ("s-z" . "gprev")
+                     ("s-x" . "gnext")))
+(loop for i from 0 to 9
+   do (define-key *top-map* (kbd (format nil "s-~A" i)) (format nil "select-window-by-number ~A" i)))
+
+(alist-define-keys (create-map *frame-map* "s-f")
+                   '(("f" . "frame-windowlist")
+                     ("s-f" . "fother")
+                     ("n" . "next-in-frame")
+                     ("p" . "prev-in-frame")))
+
+(alist-define-keys (create-map *window-map* "s-w")
+                   '(("h" . "move-focus left")
+                     ("j" . "move-focus down")
+                     ("k" . "move-focus up")
+                     ("l" . "move-focus right")
+
+                     ("q" . "delete")
+                     ("Q" . "kill")
+
+                     ("n" . "pull-hidden-next")
+                     ("p" . "pull-hidden-previous")
+
+                     ("w" . "windowlist")
+                     ("s-w" . "pull-hidden-other")
+
+                     ("s" . "vsplit")
+                     ("v" . "hsplit")
+                     ("d" . "remove")
+                     ("r" . "iresize")))
+
+(alist-define-keys (create-map *window-move-map* "m" :on *window-map*)
+                   '(("h" . "move-window left")
+                     ("j" . "move-window down")
+                     ("k" . "move-window up")
+                     ("l" . "move-window right")))
+
+(alist-define-keys (create-map *window-transpose-map* "t" :on *window-map*)
+                   '(("h" . "exchange-direction left")
+                     ("j" . "exchange-direction down")
+                     ("k" . "exchange-direction up")
+                     ("l" . "exchange-direction right")))
+
+(alist-define-keys (create-map *group-map* "s-g")
+                   '(("g" . "grouplist")
+                     ("s-g" . "gother")
+
+                     ("n" . "gnext")
+                     ("N" . "gnext-with-window")
+
+                     ("p" . "gprev")
+                     ("P" . "gprev-with-window")
+
+                     ("c" . "gnew")
+                     ("q" . "gkill")
+                     ("r" . "grename")
+                     ))
+(loop for i from 0 to 9
+   do (define-key
+          *group-map*
+          (kbd (format nil "s-~A" i))
+        (format nil "gselect ~A" i)))
+
+(defcommand run-firefox () ()
+            "Run Firefox"
+            (run-or-raise "firefox-bin" '(:class "Firefox")))
+
+(defcommand run-terminal () ()
+            "Run terminal"
+
+            (let ()
+              (run-or-raise "firefox-bin" `(:class class-name))))
+
+(defcommand run-thunderbird () ()
+            "Run Thunderbird"
+            (run-or-raise "thunderbird-bin" '(:class "Thunderbird")))
+
+(defcommand display-named-emacs (name) ((:string "Name: "))
+            "Raise emacs frame with given name"
+            (labels ((escape (str)
+                       (format nil "~S" str)))
+              (let* ((title (format nil "Emacs - ~A" name))
+                     (name-str (format nil "(name . ~S)" title))
+                     (title-str (format nil "(title . ~S)" title))
+                     (form (format nil "(~A ~A)" name-str title-str))
+                     (args (list "/usr/bin/emacsclient" "-c" "-F" (escape form)))
+                     (cmd (str:join " " args)))
+
+                (run-or-raise cmd `(:title ,title)))))
+
+(alist-define-keys (create-map *applications-map* "s-a")
+                   '(("f" . "run-firefox")
+                     ("m" . "run-thunderbird")))
+
+(alist-define-keys (create-map *applications-emacs* "e" :on *applications-map*)
+                   '(("e" . "display-named-emacs main")))
+(loop for c across "abcdfghijklmnopqrstuvwxyz0123456789"
+   do (define-key *applications-emacs* (kbd (format nil "~C"c)) (format nil "display-named-emacs ~C" c)))
