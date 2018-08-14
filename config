@@ -22,6 +22,10 @@
      (define-key ,on (kbd ,key) ',var)
      ,var))
 
+(defcommand xbacklight (args) ((:string "Arguments: "))
+            "Run xbacklight"
+            (run-shell-command (format nil "xbacklight ~S" args)))
+
 (alist-define-keys *top-map*
                    '(("s-h" . "move-focus left")
                      ("s-j" . "move-focus down")
@@ -51,7 +55,12 @@
                      ("s-r" . "loadrc")
 
                      ("s-z" . "gprev")
-                     ("s-x" . "gnext")))
+                     ("s-x" . "gnext")
+
+                     ("S-XF86MonBrightnessUp" . "xbacklight =100%")
+                     ("S-XF86MonBrightnessDown" . "xbacklight =3%")
+                     ("XF86MonBrightnessUp" . "xbacklight +5%")
+                     ("XF86MonBrightnessDown" . "xbacklight -5%")))
 (loop for i from 0 to 9
    do (define-key *top-map* (kbd (format nil "s-~A" i)) (format nil "select-window-by-number ~A" i)))
 
