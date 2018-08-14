@@ -1,11 +1,24 @@
 ;; -*-lisp-*-
 
+;;; TODOs:
+;;; - mode-line
+;;; - icon tray
+;;; - Terminal
+;;; - Lock screen
+;;; - Session management
+;;;   - Log out
+;;;   - Switch user
+;;;   - Reboot
+;;;   - Power off
+
 (in-package :stumpwm)
 (ql:quickload "str")
 
 (setf *screen-mode-line-format*
       ;; (list "%g | " '(:eval (run-shell-command "date" t)))
-      "[^B%n^b] %W")
+      ;; "[^B%n^b] %W"  ;; Original
+      ;; "[^B%n^b] %v %d"
+      (list "[^B%n^b]^>%d"))
 
 (setf *mode-line-timeout* 1)
 
