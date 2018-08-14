@@ -14,15 +14,26 @@
 (in-package :stumpwm)
 (ql:quickload "str")
 
+(set-module-dir #P"/home/herbert/opt/stumpwm/contrib/")
+(setf *mode-line-position* :bottom)
+
+;; (load-module "app-menu")
+;; (load-module "battery-portable")
+(load-module "cpu")
+(load-module "mem")
+(load-module "net")
+(load-module "wifi")
+;; (load-module "stumptray")
+
 (setf *screen-mode-line-format*
       ;; (list "%g | " '(:eval (run-shell-command "date" t)))
       ;; "[^B%n^b] %W"  ;; Original
-      ;; "[^B%n^b] %v %d"
-      (list "[^B%n^b]^>%d"))
+      "[^B%n^b] %v^> | %c%M%I %d")
 
 (setf *mode-line-timeout* 1)
 
-;; (toggle-mode-line (current-screen) (current-head))
+(if (not (head-mode-line (current-head)))
+    (toggle-mode-line (current-screen) (current-head)))
 
 (defun alist-define-keys (map alist)
   "define key using alist."
@@ -128,8 +139,7 @@
 
                      ("c" . "gnew")
                      ("q" . "gkill")
-                     ("r" . "grename")
-                     ))
+                     ("r" . "grename")))
 (loop for i from 0 to 9
    do (define-key
           *group-map*
