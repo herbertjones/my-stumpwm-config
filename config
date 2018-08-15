@@ -84,6 +84,9 @@
                      ("s-z" . "gprev")
                      ("s-x" . "gnext")
 
+                     ("s-n" . "next-in-frame")
+                     ("s-p" . "prev-in-frame")
+
                      ("S-XF86MonBrightnessUp" . "xbacklight =100%")
                      ("S-XF86MonBrightnessDown" . "xbacklight =3%")
                      ("XF86MonBrightnessUp" . "xbacklight +5%")
