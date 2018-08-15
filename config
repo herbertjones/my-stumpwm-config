@@ -37,6 +37,19 @@
 ;; :click, :ignore, :sloppy
 (setf *mouse-focus-policy* :sloppy)
 
+(run-commands "grename Emacs"
+              "gnewbg Browser"
+              "gnewbg Email"
+              "gnewbg Security")
+
+(clear-window-placement-rules)
+
+(define-frame-preference "Browser"
+    (0 t   t :class "Firefox"))
+
+(define-frame-preference "Email"
+    (0 t   t :class "Thunderbird"))
+
 (defun alist-define-keys (map alist)
   "define key using alist."
   (loop for (key . command) in alist
