@@ -12,6 +12,7 @@
 (in-package :stumpwm)
 (ql:quickload "str")
 (ql:quickload "xembed")
+(ql:quickload "clx-truetype")
 
 (set-module-dir #P"/home/herbert/opt/stumpwm/contrib/")
 (setf *mode-line-position* :bottom)
@@ -23,6 +24,10 @@
 (load-module "net")
 (load-module "wifi")
 (load-module "stumptray")
+(load-module "ttf-fonts")
+
+(xft:cache-fonts)
+(set-font (make-instance 'xft:font :family "Iosevka Light" :subfamily "Regular" :size 10))
 
 (setf *screen-mode-line-format*
       ;; (list "%g | " '(:eval (run-shell-command "date" t)))
