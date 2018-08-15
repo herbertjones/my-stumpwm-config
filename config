@@ -116,14 +116,16 @@
                      ("XF86MonBrightnessUp" . "xbacklight +5%")
                      ("XF86MonBrightnessDown" . "xbacklight -5%")))
 (loop for i from 0 to 9
-   do (define-key *top-map* (kbd (format nil "s-~A" i)) (format nil "select-window-by-number ~A" i)))
+   do (define-key *top-map* (kbd (format nil "s-~A" i)) (format nil "gselect ~A" i)))
 
 (alist-define-keys (create-map *frame-map* "s-f")
                    '(("f" . "frame-windowlist")
                      ("s-f" . "fother")
                      ("n" . "next-in-frame")
                      ("p" . "prev-in-frame")
-                     ("e" . "fclear")))
+                     ("e" . "fclear")
+                     ("m" . "only")
+                     ("=" . "balance-frames")))
 
 (alist-define-keys (create-map *window-map* "s-w")
                    '(("h" . "move-focus left")
@@ -139,6 +141,9 @@
 
                      ("w" . "windowlist")
                      ("s-w" . "pull-hidden-other")
+
+                     ("g" . "gmove")
+                     ("m" . "only")
 
                      ("s" . "vsplit")
                      ("v" . "hsplit")
