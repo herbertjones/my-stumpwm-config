@@ -59,15 +59,15 @@
                      ("s-k" . "move-focus up")
                      ("s-l" . "move-focus right")
 
-                     ("s-H" . "exchange-direction left")
-                     ("s-J" . "exchange-direction down")
-                     ("s-K" . "exchange-direction up")
-                     ("s-L" . "exchange-direction right")
+                     ("s-H" . "move-window left")
+                     ("s-J" . "move-window down")
+                     ("s-K" . "move-window up")
+                     ("s-L" . "move-window right")
 
-                     ("s-M-H" . "move-window left")
-                     ("s-M-J" . "move-window down")
-                     ("s-M-K" . "move-window up")
-                     ("s-M-L" . "move-window right")
+                     ("s-M-H" . "exchange-direction left")
+                     ("s-M-J" . "exchange-direction down")
+                     ("s-M-K" . "exchange-direction up")
+                     ("s-M-L" . "exchange-direction right")
 
                      ("s-;" . "colon")
 
