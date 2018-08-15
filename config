@@ -1,7 +1,6 @@
 ;; -*-lisp-*-
 
 ;;; TODOs:
-;;; - mode-line
 ;;; - Lock screen
 ;;; - Session management
 ;;;   - Log out
@@ -29,10 +28,14 @@
 (xft:cache-fonts)
 (set-font (make-instance 'xft:font :family "Iosevka Light" :subfamily "Regular" :size 10))
 
+(setf *window-format*
+      ;; "%m%n%s%50t" ;; Default
+      "%m%s%20c")
+
 (setf *screen-mode-line-format*
       ;; (list "%g | " '(:eval (run-shell-command "date" t)))
       ;; "[^B%n^b] %W"  ;; Original
-      "[^B%n^b] %v^> | %c%M%I %d")
+      "%g | %W^> | %c%M%I %d")
 
 (setf *mode-line-timeout* 1)
 
