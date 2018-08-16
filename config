@@ -1,13 +1,5 @@
 ;; -*-lisp-*-
 
-;;; TODOs:
-;;; - Lock screen
-;;; - Session management
-;;;   - Log out
-;;;   - Switch user
-;;;   - Reboot
-;;;   - Power off
-
 (in-package :stumpwm)
 (ql:quickload "str")
 (ql:quickload "xembed")
@@ -24,6 +16,7 @@
 (load-module "wifi")
 (load-module "stumptray")
 (load-module "ttf-fonts")
+(load-module "end-session")
 
 (xft:cache-fonts)
 (set-font (make-instance 'xft:font :family "Iosevka Light" :subfamily "Regular" :size 10))
@@ -122,6 +115,8 @@
 
                      ("s-n" . "next-in-frame")
                      ("s-p" . "prev-in-frame")
+
+                     ("s-q" . "end-session")
 
                      ("S-XF86MonBrightnessUp" . "xbacklight =100%")
                      ("S-XF86MonBrightnessDown" . "xbacklight =3%")
