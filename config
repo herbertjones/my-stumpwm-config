@@ -55,7 +55,8 @@
 (clear-window-placement-rules)
 
 (define-frame-preference "Browser"
-    (0 t   t :class "Firefox"))
+    (0 t   t :class "Firefox")
+  (1 t   t :class "Google-chrome"))
 
 (define-frame-preference "Email"
     (0 t   t :class "Thunderbird"))
@@ -237,6 +238,10 @@
                    (cmd (str:join " " (map 'list #'string-escape args))))
               (run-or-raise cmd `(:title ,title))))
 
+(defcommand run-chrome () ()
+            "Run Chrome"
+            (run-or-raise "firejail google-chrome-stable" '(:class "Google-chrome")))
+
 (defcommand run-thunderbird () ()
             "Run Thunderbird"
             (run-or-raise "thunderbird-bin" '(:class "Thunderbird")))
@@ -257,6 +262,7 @@
 
 (alist-define-keys (create-map *applications-map* "s-a")
                    '(("f" . "run-firefox")
+                     ("c" . "run-chrome")
                      ("t" . "run-named-terminal main")
                      ("m" . "run-thunderbird")
                      ("y" . "run-yakyak")))
