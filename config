@@ -21,6 +21,9 @@
 (xft:cache-fonts)
 (set-font (make-instance 'xft:font :family "Iosevka Light" :subfamily "Regular" :size 10))
 
+(setf *window-border-style* :thin)
+(setf *normal-border-width* 1)
+
 (setf *window-format*
       ;; "%m%n%s%50t" ;; Default
       "%m%s%20c")
