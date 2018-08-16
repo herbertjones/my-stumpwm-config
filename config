@@ -55,6 +55,7 @@
 (run-commands "grename Emacs"
               "gnewbg Browser"
               "gnewbg Email"
+              "gnewbg Communication"
               "gnewbg Security")
 
 (clear-window-placement-rules)
@@ -64,6 +65,9 @@
 
 (define-frame-preference "Email"
     (0 t   t :class "Thunderbird"))
+
+(define-frame-preference "Communication"
+    (0 t   t :class "yakyak"))
 
 (defun alist-define-keys (map alist)
   "define key using alist."
@@ -214,10 +218,15 @@
                    (cmd (str:join " " args)))
               (run-or-raise cmd `(:title ,title))))
 
+(defcommand run-yakyak () ()
+            "Run Yakyak"
+            (run-or-raise "yakyak" '(:class "yakyak")))
+
 (alist-define-keys (create-map *applications-map* "s-a")
                    '(("f" . "run-firefox")
                      ("t" . "run-named-terminal main")
-                     ("m" . "run-thunderbird")))
+                     ("m" . "run-thunderbird")
+                     ("y" . "run-yakyak")))
 
 (alist-define-keys (create-map *applications-emacs* "e" :on *applications-map*)
                    '(("e" . "display-named-emacs main")))
