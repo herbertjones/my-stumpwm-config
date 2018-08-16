@@ -67,6 +67,9 @@
 (define-frame-preference "Terminal"
     (0 t t :title "tmux - main"))
 
+(define-frame-preference "Security"
+    (0 t t :class "keepassxc"))
+
 (defun alist-define-keys (map alist)
   "define key using alist."
   (loop for (key . command) in alist
@@ -246,6 +249,10 @@
             "Run Thunderbird"
             (run-or-raise "thunderbird-bin" '(:class "Thunderbird")))
 
+(defcommand run-keepassxc () ()
+            "Run KeepassXC"
+            (run-or-raise "keepassxc" '(:class "keepassxc")))
+
 (defcommand display-named-emacs (name) ((:string "Name: "))
             "Raise emacs frame with given name"
             (let* ((title (format nil "Emacs - ~A" name))
@@ -263,6 +270,7 @@
 (alist-define-keys (create-map *applications-map* "s-a")
                    '(("f" . "run-firefox")
                      ("c" . "run-chrome")
+                     ("k" . "run-keepassxc")
                      ("t" . "run-named-terminal main")
                      ("m" . "run-thunderbird")
                      ("y" . "run-yakyak")))
