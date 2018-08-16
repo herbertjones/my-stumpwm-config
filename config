@@ -253,6 +253,10 @@
             "Run KeepassXC"
             (run-or-raise "keepassxc" '(:class "keepassxc")))
 
+(defcommand toggle-touchpad () ()
+            "Enable/Disable touchpad"
+            (run-shell-command "toggle-touchpad"))
+
 (defcommand display-named-emacs (name) ((:string "Name: "))
             "Raise emacs frame with given name"
             (let* ((title (format nil "Emacs - ~A" name))
