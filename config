@@ -55,6 +55,7 @@
 (run-commands "grename Emacs"
               "gnewbg Browser"
               "gnewbg Email"
+              "gnewbg Terminal"
               "gnewbg Communication"
               "gnewbg Security")
 
@@ -68,6 +69,9 @@
 
 (define-frame-preference "Communication"
     (0 t   t :class "yakyak"))
+
+(define-frame-preference "Terminal"
+    (0 t t :title "tmux - main"))
 
 (defun alist-define-keys (map alist)
   "define key using alist."
@@ -196,9 +200,13 @@
             "Run Firefox"
             (run-or-raise "firefox-bin" '(:class "Firefox")))
 
+(defun named-terminal-title (name)
+  "Title for named terminal"
+  (format nil "tmux - ~A" name))
+
 (defcommand run-named-terminal (name) ((:string "Name: "))
             "Run terminal"
-            (let* ((title (format nil "tmux - ~A" name))
+            (let* ((title (named-terminal-title name))
                    (args (list
                           "st"
                           "-t" title ;; Title
