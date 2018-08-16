@@ -125,6 +125,9 @@
                      ("XF86MonBrightnessDown" . "xbacklight -5%")))
 (loop for i from 0 to 9
    do (define-key *top-map* (kbd (format nil "s-~A" i)) (format nil "gselect ~A" i)))
+(loop for ch in '(#\) #\! #\@ #\# #\$ #\% #\^ #\& #\* #\()
+   and i from 0 to 9
+   do (define-key *top-map* (kbd (format nil "s-~A" ch)) (format nil "gmove ~A" i)))
 
 (alist-define-keys (create-map *frame-map* "s-f")
                    '(("f" . "frame-windowlist")
