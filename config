@@ -16,7 +16,6 @@
 (load-module "wifi")
 (load-module "stumptray")
 (load-module "ttf-fonts")
-(load-module "end-session")
 
 (xft:cache-fonts)
 (set-font (make-instance 'xft:font :family "Iosevka Light" :subfamily "Regular" :size 10))
@@ -96,6 +95,10 @@
             "Run amixer"
             (run-shell-command (format nil "amixer ~A" args)))
 
+(defcommand lock () ()
+            "Lock session"
+            (run-shell-command "dm-tool lock"))
+
 (alist-define-keys *top-map*
                    '(("s-h" . "move-focus left")
                      ("s-j" . "move-focus down")
@@ -127,7 +130,9 @@
                      ("s-n" . "next-in-frame")
                      ("s-p" . "prev-in-frame")
 
-                     ("s-q" . "end-session")
+                     ("s-q" . "session-menu")
+
+                     ("XF86ScreenSaver" . "lock")
 
                      ("S-XF86MonBrightnessUp" . "xbacklight =100%")
                      ("S-XF86MonBrightnessDown" . "xbacklight =3%")
@@ -273,6 +278,36 @@
 (defcommand run-yakyak () ()
             "Run Yakyak"
             (run-or-raise "yakyak" '(:class "yakyak")))
+
+(defmacro if-sure (&body body)
+  `(when (equal :yes (second (select-from-menu (current-screen)
+                                               '(("yes" :yes) ("no" :no))
+                                               "Are you sure?")))
+     ,@body))
+
+(defcommand session-menu () ()
+            (let* ((menu '(("cancel" "echo cancelled")
+                           ("log out" :quit)
+                           ("switch user" :switch-user)
+                           ("reboot" :reboot)
+                           ("reload" "loadrc")
+                           ("poweroff" :poweroff)))
+                   (selection (select-from-menu (current-screen) menu "Choose action:")))
+              (cond ((null selection)
+                     nil)
+                    ((stringp (second selection))
+                     (run-commands (second selection)))
+                    (t (case (second selection)
+                         (:quit
+                          (if-sure (run-commands "quit")))
+                         (:switch-user
+                          (if-sure (run-shell-command "dm-tool switch-to-greeter")))
+                         (:reboot
+                          (if-sure (run-shell-command "systemctl reboot")))
+                         (:poweroff
+                          (if-sure (run-shell-command "systemctl poweroff")))
+                         (otherwise
+                          (run-commands (format nil "echo Unknown selection: ~S" (second selection)))))))))
 
 (alist-define-keys (create-map *applications-map* "s-a")
                    '(("f" . "run-firefox")
