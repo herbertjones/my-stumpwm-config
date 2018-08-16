@@ -81,9 +81,13 @@
   "Escape a string"
   (format nil "~S" str))
 
-(defcommand xbacklight (args) ((:string "Arguments: "))
+(defcommand xbacklight (args) ((:shell "Arguments: "))
             "Run xbacklight"
             (run-shell-command (format nil "xbacklight ~S" args)))
+
+(defcommand amixer (args) ((:shell "Arguments: "))
+            "Run amixer"
+            (run-shell-command (format nil "amixer ~A" args)))
 
 (alist-define-keys *top-map*
                    '(("s-h" . "move-focus left")
@@ -121,7 +125,18 @@
                      ("S-XF86MonBrightnessUp" . "xbacklight =100%")
                      ("S-XF86MonBrightnessDown" . "xbacklight =3%")
                      ("XF86MonBrightnessUp" . "xbacklight +5%")
-                     ("XF86MonBrightnessDown" . "xbacklight -5%")))
+                     ("XF86MonBrightnessDown" . "xbacklight -5%")
+
+                     ("XF86AudioRaiseVolume" . "amixer -c 0 sset Master 1+")
+                     ("XF86AudioLowerVolume" . "amixer -c 0 sset Master 1-")
+
+                     ("XF86AudioMute" . "amixer sset Master,0 toggle")
+
+                     ("S-XF86AudioRaiseVolume" . "amixer -c 0 sset Capture 1+")
+                     ("S-XF86AudioLowerVolume" . "amixer -c 0 sset Capture 1-")
+
+                     ("XF86AudioMicMute" . "amixer sset Capture,0 toggle")))
+
 (loop for i from 0 to 9
    do (define-key *top-map* (kbd (format nil "s-~A" i)) (format nil "gselect ~A" i)))
 (loop for ch in '(#\) #\! #\@ #\# #\$ #\% #\^ #\& #\* #\()
