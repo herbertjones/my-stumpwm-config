@@ -104,11 +104,8 @@
 
                      ("C-TAB" . "next-in-frame")
                      ("s-TAB" . "fnext")
-                     ;; ("M-TAB" . "next")
-                     ;; ("s-TAB" . "gnext")
-                     ;; ("s-S-TAB" . "pull-hidden-previous")
 
-                     ("s-b" . "mode-line")
+                     ("s-b" . "fullscreen")
 
                      ("s-r" . "loadrc")
 
