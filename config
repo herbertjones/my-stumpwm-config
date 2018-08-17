@@ -284,6 +284,7 @@
           do (format stream " ~A" item))
     (terpri stream)))
 
+;;; TODO: Add :top :bottom :left :right directions
 (defun scratchpad-toggle (cmd props &optional (ratio 1/2) (direction :row)
                                   (all-groups *run-or-raise-all-groups*)
                                   (all-screens *run-or-raise-all-screens*))
