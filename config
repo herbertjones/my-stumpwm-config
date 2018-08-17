@@ -297,32 +297,33 @@
           (t (let* ((win (car matches))
                     (wframe (window-frame win))
                     (wgroup (window-group win)))
-               (labels ((maybe-remove-old ()
+               (labels ((maybe-remove-old-split ()
                           ;; Remove old frame if empty
                           (when (null (frame-window wframe)) ;; TODO and group has more than one frame
-                            (remove-split wgroup)
-                            )))
-                 (cond (;; Currently focused on scratchpad
-                        (and (eq cframe wframe)
-                             (eq win (frame-window cframe)))
-                        (remove-split))
-                       (;; Scratchpad is visible, move to it
-                        (and (eq wgroup group) (window-visible-p win))
-                        (focus-frame wgroup wframe))
-                       (;; Current frame is empty, just display it
-                        (null (frame-window cframe))
-                        (move-window-to-group win group)
-                        (maybe-remove-old))
-                       (t ;; Scratchpad must be displayed
-                        (let ((new-num (split-frame group direction ratio)))
-                          (move-window-to-group win group)
-                          (pull-window win (frame-by-number group new-num))
-                          (focus-frame group (frame-by-number group new-num))
-                          (maybe-remove-old))))))))))
+                            (remove-split wgroup))))
+                 (cond
+                   ;; Currently focused on scratchpad
+                   ((and (eq cframe wframe)
+                         (eq win (frame-window cframe)))
+                    (remove-split))
+                   ;; Scratchpad is visible, move to it
+                   ((and (eq wgroup group) (window-visible-p win))
+                    (focus-frame wgroup wframe))
+                   ;; Current frame is empty, just display it
+                   ((null (frame-window cframe))
+                    (move-window-to-group win group)
+                    (maybe-remove-old-split))
+                   ;; Scratchpad must be displayed
+                   (t
+                    (let ((new-num (split-frame group direction ratio)))
+                      (move-window-to-group win group)
+                      (pull-window win (frame-by-number group new-num))
+                      (focus-frame group (frame-by-number group new-num))
+                      (maybe-remove-old-split))))))))))
 
 (defcommand show-yakyak () ()
   "Show Yakyak"
-  (scratchpad-toggle "yakyak" '(:class "yakyak") 7/12))
+  (scratchpad-toggle "yakyak" '(:class "yakyak")))
 
 (defcommand run-yakyak () ()
   "Run Yakyak"
