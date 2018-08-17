@@ -132,6 +132,8 @@
 
                      ("s-q" . "session-menu")
 
+                     ("s-`" . "show-yakyak")
+
                      ("XF86ScreenSaver" . "lock")
 
                      ("S-XF86MonBrightnessUp" . "xbacklight =100%")
@@ -274,6 +276,53 @@
          (args (list "/usr/bin/emacsclient" "-c" "-F" (string-escape form)))
          (cmd (str:join " " args)))
     (run-or-raise cmd `(:title ,title))))
+
+(defun my-debug (&rest data)
+  (with-open-file (stream #P"/home/herbert/tmp/stumpwm.txt"
+                          :direction :output
+                          :if-exists :append
+                          :if-does-not-exist :create)
+    (format stream "~&~A" (car data))
+    (loop for item in (cdr data)
+          do (format stream " ~A" item))
+    (terpri stream)))
+
+(defun scratchpad-toggle (cmd props &optional (ratio 1/2) (all-groups *run-or-raise-all-groups*)
+                                  (all-screens *run-or-raise-all-screens*))
+  (let* ((group (current-group))
+         (matches (find-matching-windows props all-groups all-screens))
+         (cframe (tile-group-current-frame group)))
+    (cond ((null matches)
+           (run-shell-command cmd))
+          (t (let* ((win (car matches))
+                    (wframe (window-frame win))
+                    (wgroup (window-group win)))
+               (labels ((maybe-remove-old ()
+                          ;; Remove old frame if empty
+                          (when (null (frame-window wframe)) ;; TODO and group has more than one frame
+                            (remove-split wgroup)
+                            )))
+                 (cond (;; Currently focused on scratchpad
+                        (and (eq cframe wframe)
+                             (eq win (frame-window cframe)))
+                        (remove-split))
+                       (;; Scratchpad is visible, move to it
+                        (and (eq wgroup group) (window-visible-p win))
+                        (focus-frame wgroup wframe))
+                       (;; Current frame is empty, just display it
+                        (null (frame-window cframe))
+                        (move-window-to-group win group)
+                        (maybe-remove-old))
+                       (t ;; Scratchpad must be displayed
+                        (let ((new-num (split-frame group :row ratio)))
+                          (move-window-to-group win group)
+                          (pull-window win (frame-by-number group new-num))
+                          (focus-frame group (frame-by-number group new-num))
+                          (maybe-remove-old))))))))))
+
+(defcommand show-yakyak () ()
+  "Show Yakyak"
+  (scratchpad-toggle "yakyak" '(:class "yakyak") 7/12))
 
 (defcommand run-yakyak () ()
   "Run Yakyak"
