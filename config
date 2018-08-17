@@ -331,7 +331,7 @@
 
 (defmacro if-sure (&body body)
   `(when (equal :yes (second (select-from-menu (current-screen)
-                                               '(("yes" :yes) ("no" :no))
+                                               '(("no" :no) ("yes" :yes))
                                                "Are you sure?")))
      ,@body))
 
