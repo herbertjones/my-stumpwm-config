@@ -75,7 +75,7 @@
 (defun alist-define-keys (map alist)
   "define key using alist."
   (loop for (key . command) in alist
-     do (define-key map (kbd key) command)))
+        do (define-key map (kbd key) command)))
 
 (defmacro create-map (var key &key (on *top-map*))
   `(progn
@@ -88,16 +88,16 @@
   (format nil "~S" str))
 
 (defcommand xbacklight (args) ((:shell "Arguments: "))
-            "Run xbacklight"
-            (run-shell-command (format nil "xbacklight ~S" args)))
+  "Run xbacklight"
+  (run-shell-command (format nil "xbacklight ~S" args)))
 
 (defcommand amixer (args) ((:shell "Arguments: "))
-            "Run amixer"
-            (run-shell-command (format nil "amixer ~A" args)))
+  "Run amixer"
+  (run-shell-command (format nil "amixer ~A" args)))
 
 (defcommand lock () ()
-            "Lock session"
-            (run-shell-command "dm-tool lock"))
+  "Lock session"
+  (run-shell-command "dm-tool lock"))
 
 (alist-define-keys *top-map*
                    '(("s-h" . "move-focus left")
@@ -150,10 +150,10 @@
                      ("XF86AudioMicMute" . "amixer sset Capture,0 toggle")))
 
 (loop for i from 0 to 9
-   do (define-key *top-map* (kbd (format nil "s-~A" i)) (format nil "gselect ~A" i)))
+      do (define-key *top-map* (kbd (format nil "s-~A" i)) (format nil "gselect ~A" i)))
 (loop for ch in '(#\) #\! #\@ #\# #\$ #\% #\^ #\& #\* #\()
-   and i from 0 to 9
-   do (define-key *top-map* (kbd (format nil "s-~A" ch)) (format nil "gmove ~A" i)))
+      and i from 0 to 9
+      do (define-key *top-map* (kbd (format nil "s-~A" ch)) (format nil "gmove ~A" i)))
 
 (alist-define-keys (create-map *frame-map* "s-f")
                    '(("f" . "frame-windowlist")
@@ -213,10 +213,10 @@
                      ("q" . "gkill")
                      ("r" . "grename")))
 (loop for i from 0 to 9
-   do (define-key
-          *group-map*
-          (kbd (format nil "~A" i))
-        (format nil "gselect ~A" i)))
+      do (define-key
+             *group-map*
+             (kbd (format nil "~A" i))
+           (format nil "gselect ~A" i)))
 
 (alist-define-keys (create-map *group-map* "s-s")
                    '(("j" . "stumptray-toggle-hidden-icons-visibility")
@@ -231,53 +231,53 @@
                      ("s" . "stumptray")))
 
 (defcommand run-firefox () ()
-            "Run Firefox"
-            (run-or-raise "firefox-bin" '(:class "Firefox")))
+  "Run Firefox"
+  (run-or-raise "firefox-bin" '(:class "Firefox")))
 
 (defun named-terminal-title (name)
   "Title for named terminal"
   (format nil "tmux - ~A" name))
 
 (defcommand run-named-terminal (name) ((:string "Name: "))
-            "Run terminal"
-            (let* ((title (named-terminal-title name))
-                   (args (list
-                          "st"
-                          "-t" title ;; Title
-                          "-f" "Source Code Pro"
-                          "-e" "/usr/bin/tmux" "new-session" "-AD" "-s" name))
-                   (cmd (str:join " " (map 'list #'string-escape args))))
-              (run-or-raise cmd `(:title ,title))))
+  "Run terminal"
+  (let* ((title (named-terminal-title name))
+         (args (list
+                "st"
+                "-t" title ;; Title
+                "-f" "Source Code Pro"
+                "-e" "/usr/bin/tmux" "new-session" "-AD" "-s" name))
+         (cmd (str:join " " (map 'list #'string-escape args))))
+    (run-or-raise cmd `(:title ,title))))
 
 (defcommand run-chrome () ()
-            "Run Chrome"
-            (run-or-raise "firejail google-chrome-stable" '(:class "Google-chrome")))
+  "Run Chrome"
+  (run-or-raise "firejail google-chrome-stable" '(:class "Google-chrome")))
 
 (defcommand run-thunderbird () ()
-            "Run Thunderbird"
-            (run-or-raise "thunderbird-bin" '(:class "Thunderbird")))
+  "Run Thunderbird"
+  (run-or-raise "thunderbird-bin" '(:class "Thunderbird")))
 
 (defcommand run-keepassxc () ()
-            "Run KeepassXC"
-            (run-or-raise "keepassxc" '(:class "keepassxc")))
+  "Run KeepassXC"
+  (run-or-raise "keepassxc" '(:class "keepassxc")))
 
 (defcommand toggle-touchpad () ()
-            "Enable/Disable touchpad"
-            (run-shell-command "toggle-touchpad"))
+  "Enable/Disable touchpad"
+  (run-shell-command "toggle-touchpad"))
 
 (defcommand display-named-emacs (name) ((:string "Name: "))
-            "Raise emacs frame with given name"
-            (let* ((title (format nil "Emacs - ~A" name))
-                   (name-str (format nil "(name . ~S)" title))
-                   (title-str (format nil "(title . ~S)" title))
-                   (form (format nil "(~A ~A)" name-str title-str))
-                   (args (list "/usr/bin/emacsclient" "-c" "-F" (string-escape form)))
-                   (cmd (str:join " " args)))
-              (run-or-raise cmd `(:title ,title))))
+  "Raise emacs frame with given name"
+  (let* ((title (format nil "Emacs - ~A" name))
+         (name-str (format nil "(name . ~S)" title))
+         (title-str (format nil "(title . ~S)" title))
+         (form (format nil "(~A ~A)" name-str title-str))
+         (args (list "/usr/bin/emacsclient" "-c" "-F" (string-escape form)))
+         (cmd (str:join " " args)))
+    (run-or-raise cmd `(:title ,title))))
 
 (defcommand run-yakyak () ()
-            "Run Yakyak"
-            (run-or-raise "yakyak" '(:class "yakyak")))
+  "Run Yakyak"
+  (run-or-raise "yakyak" '(:class "yakyak")))
 
 (defmacro if-sure (&body body)
   `(when (equal :yes (second (select-from-menu (current-screen)
@@ -286,28 +286,28 @@
      ,@body))
 
 (defcommand session-menu () ()
-            (let* ((menu '(("cancel" "echo cancelled")
-                           ("log out" :quit)
-                           ("switch user" :switch-user)
-                           ("reboot" :reboot)
-                           ("reload" "loadrc")
-                           ("poweroff" :poweroff)))
-                   (selection (select-from-menu (current-screen) menu "Choose action:")))
-              (cond ((null selection)
-                     nil)
-                    ((stringp (second selection))
-                     (run-commands (second selection)))
-                    (t (case (second selection)
-                         (:quit
-                          (if-sure (run-commands "quit")))
-                         (:switch-user
-                          (if-sure (run-shell-command "dm-tool switch-to-greeter")))
-                         (:reboot
-                          (if-sure (run-shell-command "systemctl reboot")))
-                         (:poweroff
-                          (if-sure (run-shell-command "systemctl poweroff")))
-                         (otherwise
-                          (run-commands (format nil "echo Unknown selection: ~S" (second selection)))))))))
+  (let* ((menu '(("cancel" "echo cancelled")
+                 ("log out" :quit)
+                 ("switch user" :switch-user)
+                 ("reboot" :reboot)
+                 ("reload" "loadrc")
+                 ("poweroff" :poweroff)))
+         (selection (select-from-menu (current-screen) menu "Choose action:")))
+    (cond ((null selection)
+           nil)
+          ((stringp (second selection))
+           (run-commands (second selection)))
+          (t (case (second selection)
+               (:quit
+                (if-sure (run-commands "quit")))
+               (:switch-user
+                (if-sure (run-shell-command "dm-tool switch-to-greeter")))
+               (:reboot
+                (if-sure (run-shell-command "systemctl reboot")))
+               (:poweroff
+                (if-sure (run-shell-command "systemctl poweroff")))
+               (otherwise
+                (run-commands (format nil "echo Unknown selection: ~S" (second selection)))))))))
 
 (alist-define-keys (create-map *applications-map* "s-a")
                    '(("f" . "run-firefox")
@@ -320,7 +320,7 @@
 (alist-define-keys (create-map *applications-emacs* "e" :on *applications-map*)
                    '(("e" . "display-named-emacs main")))
 (loop for c across "abcdfghijklmnopqrstuvwxyz0123456789"
-   do (define-key *applications-emacs* (kbd (format nil "~C"c)) (format nil "display-named-emacs ~C" c)))
+      do (define-key *applications-emacs* (kbd (format nil "~C"c)) (format nil "display-named-emacs ~C" c)))
 
 (defun mouse-inside-frame-p (frame)
   "Determine if mouse already inside frame."
