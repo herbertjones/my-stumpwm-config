@@ -27,8 +27,12 @@ Direction can be one of: :top :bottom :left :right"
                     (wgroup (window-group win)))
                (labels ((maybe-remove-old-split ()
                           ;; Remove old frame if empty
-                          (when (null (frame-window wframe)) ;; TODO and group has more than one frame
-                            (remove-split wgroup))))
+                          (let* ((head (frame-head wgroup wframe))
+                                 (current (tile-group-current-frame wgroup))
+                                 (tree (tile-group-frame-head wgroup head)))
+                            (when (and (null (frame-window wframe))
+                                       (not (atom tree)))
+                              (remove-split wgroup)))))
                  (cond
                    ;; Currently focused on scratchpad
                    ((and (eq cframe wframe)
