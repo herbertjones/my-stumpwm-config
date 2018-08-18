@@ -29,9 +29,9 @@ Direction can be one of: :top :bottom :left :right
                     (wgroup (window-group win)))
                (labels ((maybe-remove-old-split ()
                           ;; Remove old frame if empty
-                          (let* ((head (frame-head wgroup wframe))
-                                 (current (tile-group-current-frame wgroup))
-                                 (tree (tile-group-frame-head wgroup head)))
+                          (let* ((head (stumpwm::frame-head wgroup wframe))
+                                 (current (stumpwm::tile-group-current-frame wgroup))
+                                 (tree (stumpwm::tile-group-frame-head wgroup head)))
                             (when (and (null (stumpwm::frame-window wframe))
                                        (not (atom tree)))
                               (remove-split wgroup))))
