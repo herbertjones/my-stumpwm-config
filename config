@@ -114,9 +114,6 @@
 
                      ("s-;" . "colon")
 
-                     ("C-TAB" . "next-in-frame")
-                     ("s-TAB" . "fnext")
-
                      ("s-b" . "fullscreen")
 
                      ("s-r" . "loadrc")
