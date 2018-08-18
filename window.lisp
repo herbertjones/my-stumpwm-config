@@ -5,3 +5,7 @@
          (window (stumpwm::select-window-from-menu windows "%12c: %50t")))
     (when window
       (stumpwm::focus-all window))))
+
+(defcommand iresize-hfj () ()
+  (ratwarp 0 0)
+  (run-commands "iresize"))

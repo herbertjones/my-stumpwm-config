@@ -96,7 +96,7 @@
                      ("s" . "vsplit")
                      ("v" . "hsplit")
                      ("d" . "remove")
-                     ("r" . "iresize")))
+                     ("r" . "iresize-hfj")))
 
 (alist-define-keys (create-map *window-move-map* "m" :on *window-map*)
                    '(("h" . "move-window left")
