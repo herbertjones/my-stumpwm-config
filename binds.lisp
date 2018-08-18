@@ -93,6 +93,8 @@
                      ("g" . "gmove")
                      ("m" . "only")
 
+                     ("t" . "mark")
+
                      ("s" . "vsplit")
                      ("v" . "hsplit")
                      ("d" . "remove")
@@ -104,7 +106,7 @@
                      ("k" . "move-window up")
                      ("l" . "move-window right")))
 
-(alist-define-keys (create-map *window-transpose-map* "t" :on *window-map*)
+(alist-define-keys (create-map *window-transpose-map* "x" :on *window-map*)
                    '(("h" . "exchange-direction left")
                      ("j" . "exchange-direction down")
                      ("k" . "exchange-direction up")
@@ -119,6 +121,8 @@
 
                      ("p" . "gprev")
                      ("P" . "gprev-with-window")
+
+                     ("t" . "gmove-marked")
 
                      ("c" . "gnew")
                      ("q" . "gkill")
