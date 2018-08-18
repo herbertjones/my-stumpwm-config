@@ -21,6 +21,9 @@
 (load-conf "groups.lisp")
 (load-conf "session.lisp")
 (load-conf "binds.lisp")
+
 (load-conf "mouse.lisp")
+(mouse-follow:enable)
+
 (load-conf "border.lisp")
 (load-conf "mode-line.lisp")
