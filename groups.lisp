@@ -6,8 +6,6 @@
               "gnewbg Terminal"
               "gnewbg Security")
 
-(clear-window-placement-rules)
-
 (define-frame-preference "Browser"
     (0 t   t :class "Firefox")
   (1 t   t :class "Google-chrome"))
