@@ -1,4 +1,9 @@
-(in-package :hfj)
+(in-package :cl-user)
+(defpackage scratchpad
+  (:use :cl :stumpwm)
+  (:export
+   scratchpad-toggle))
+(in-package :scratchpad)
 
 (defun swap-frame-windows (group frame-a frame-b &optional ignored)
   "Swap the contents of two frames."

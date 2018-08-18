@@ -64,7 +64,7 @@
 
 (defcommand show-yakyak () ()
   "Show Yakyak"
-  (scratchpad-toggle "yakyak" '(:class "yakyak")))
+  (scratchpad:scratchpad-toggle "yakyak" '(:class "yakyak")))
 
 (defcommand run-yakyak () ()
   "Run Yakyak"
