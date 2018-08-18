@@ -9,9 +9,7 @@
   "Load a config file in the *config-path*."
   (load (uiop:subpathname* *config-path* name)))
 
-(setf *window-border-style* :thin)
-(setf *normal-border-width* 1)
-
+(load-conf "clean.lisp")
 (load-conf "debug.lisp")
 (load-conf "scratchpad.lisp")
 (load-conf "applications.lisp")
@@ -19,4 +17,5 @@
 (load-conf "session.lisp")
 (load-conf "binds.lisp")
 (load-conf "mouse.lisp")
+(load-conf "border.lisp")
 (load-conf "mode-line.lisp")
