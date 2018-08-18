@@ -1,11 +1,22 @@
 (in-package :stumpwm)
 
-;;; TODO: Add :top :bottom :left :right directions
-;;;       See: migrate-frame-windows, neighbour
-(defun scratchpad-toggle (cmd props &optional (ratio 1/2) (direction :row)
+(defun swap-frame-windows (group frame-a frame-b &optional ignored)
+  "Swap the contents of two frames."
+  (let* ((windows-a (frame-windows group frame-a))
+         (windows-b (frame-windows group frame-b)))
+    (loop for win in (reverse windows-a)
+          when (not (member win ignored))
+            do (pull-window win frame-b))
+    (loop for win in (reverse windows-b)
+          when (not (member win ignored))
+            do (pull-window win frame-a))))
+
+(defun scratchpad-toggle (cmd props &optional (ratio 1/2) (direction :right)
                                   (all-groups *run-or-raise-all-groups*)
                                   (all-screens *run-or-raise-all-screens*))
-  "Display a window in the current group, splitting or focusing."
+  "Display a window in the current group, splitting or focusing.
+
+Direction can be one of: :top :bottom :left :right"
   (let* ((group (current-group))
          (matches (find-matching-windows props all-groups all-screens))
          (cframe (tile-group-current-frame group)))
@@ -31,10 +42,16 @@
                     (move-window-to-group win group)
                     (maybe-remove-old-split))
                    ;; Scratchpad must be displayed
-                   (t
-                    (let ((new-num (split-frame group direction ratio)))
-                      (move-window-to-group win group)
-                      (pull-window win (frame-by-number group new-num))
-                      (focus-frame group (frame-by-number group new-num))
-                      (maybe-remove-old-split))))))))))
+                   (t (let* ((swapped (member direction '(:top :left)))
+                             (dir (if (member direction '(:bottom :top)) :row :column))
+                             (r (if swapped ratio (- 1 ratio)))
+                             (old-num (frame-number cframe))
+                             (new-num (split-frame group dir r))
+                             (target-frame (frame-by-number group (if swapped old-num new-num))))
+                        (when swapped
+                          (swap-frame-windows group (frame-by-number group new-num) target-frame (list win)))
+                        (move-window-to-group win group)
+                        (pull-window win target-frame)
+                        (focus-frame group target-frame)
+                        (maybe-remove-old-split))))))))))
 
