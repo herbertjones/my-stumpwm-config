@@ -1,4 +1,4 @@
-(in-package :stumpwm)
+(in-package :hfj)
 
 (defun swap-frame-windows (group frame-a frame-b &optional ignored)
   "Swap the contents of two frames."
@@ -6,10 +6,10 @@
          (windows-b (frame-windows group frame-b)))
     (loop for win in (reverse windows-a)
           when (not (member win ignored))
-            do (pull-window win frame-b))
+            do (stumpwm::pull-window win frame-b))
     (loop for win in (reverse windows-b)
           when (not (member win ignored))
-            do (pull-window win frame-a))))
+            do (stumpwm::pull-window win frame-a))))
 
 (defun scratchpad-toggle (cmd props &key (ratio 1/2) (direction '(:bottom :right))
                                   (all-groups *run-or-raise-all-groups*)
@@ -20,19 +20,19 @@ Direction can be one of: :top :bottom :left :right
  Or a list with the sides that may be chosen.  The shorter edge decide the split.
 "
   (let* ((group (current-group))
-         (matches (find-matching-windows props all-groups all-screens))
-         (cframe (tile-group-current-frame group)))
+         (matches (stumpwm::find-matching-windows props all-groups all-screens))
+         (cframe (stumpwm::tile-group-current-frame group)))
     (cond ((null matches)
            (run-shell-command cmd))
           (t (let* ((win (car matches))
-                    (wframe (window-frame win))
+                    (wframe (stumpwm::window-frame win))
                     (wgroup (window-group win)))
                (labels ((maybe-remove-old-split ()
                           ;; Remove old frame if empty
                           (let* ((head (frame-head wgroup wframe))
                                  (current (tile-group-current-frame wgroup))
                                  (tree (tile-group-frame-head wgroup head)))
-                            (when (and (null (frame-window wframe))
+                            (when (and (null (stumpwm::frame-window wframe))
                                        (not (atom tree)))
                               (remove-split wgroup))))
                         (decide-direction ()
@@ -48,13 +48,13 @@ Direction can be one of: :top :bottom :left :right
                  (cond
                    ;; Currently focused on scratchpad
                    ((and (eq cframe wframe)
-                         (eq win (frame-window cframe)))
+                         (eq win (stumpwm::frame-window cframe)))
                     (remove-split))
                    ;; Scratchpad is visible, move to it
                    ((and (eq wgroup group) (window-visible-p win))
-                    (focus-frame wgroup wframe))
+                    (stumpwm::focus-frame wgroup wframe))
                    ;; Current frame is empty, just display it
-                   ((null (frame-window cframe))
+                   ((null (stumpwm::frame-window cframe))
                     (move-window-to-group win group)
                     (maybe-remove-old-split))
                    ;; Scratchpad must be displayed
@@ -62,13 +62,13 @@ Direction can be one of: :top :bottom :left :right
                              (swapped (member decided-direction '(:top :left)))
                              (dir (if (member decided-direction '(:bottom :top)) :row :column))
                              (r (if swapped ratio (- 1 ratio)))
-                             (old-num (frame-number cframe))
-                             (new-num (split-frame group dir r))
-                             (target-frame (frame-by-number group (if swapped old-num new-num))))
+                             (old-num (stumpwm::frame-number cframe))
+                             (new-num (stumpwm::split-frame group dir r))
+                             (target-frame (stumpwm::frame-by-number group (if swapped old-num new-num))))
                         (when swapped
-                          (swap-frame-windows group (frame-by-number group new-num) target-frame (list win)))
+                          (swap-frame-windows group (stumpwm::frame-by-number group new-num) target-frame (list win)))
                         (move-window-to-group win group)
-                        (pull-window win target-frame)
-                        (focus-frame group target-frame)
+                        (stumpwm::pull-window win target-frame)
+                        (stumpwm::focus-frame group target-frame)
                         (maybe-remove-old-split))))))))))
 

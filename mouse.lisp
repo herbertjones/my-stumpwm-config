@@ -1,4 +1,4 @@
-(in-package :stumpwm)
+(in-package :hfj)
 
 ;; :click, :ignore, :sloppy
 (setf *mouse-focus-policy* :sloppy)
@@ -18,9 +18,9 @@
       (xlib:global-pointer-position  *display*)
     (let* ((group (current-group))
            (min-x (frame-x frame))
-           (min-y (frame-display-y group frame))
+           (min-y (stumpwm::frame-display-y group frame))
            (max-x (+ min-x (frame-width frame)))
-           (max-y (+ min-y (frame-display-height group frame))))
+           (max-y (+ min-y (stumpwm::frame-display-height group frame))))
       (and (<= min-x mouse-x max-x)
            (<= min-y mouse-y max-y)))))
 
@@ -30,9 +30,9 @@
          (x-offset 15)
          (y-offset 15)
          (win-x (frame-x frame))
-         (win-y (frame-display-y group frame))
+         (win-y (stumpwm::frame-display-y group frame))
          (w (frame-width frame))
-         (h (frame-display-height group frame))
+         (h (stumpwm::frame-display-height group frame))
          (x (- (+ win-x w)
                x-offset))
          (y (- (+ win-y h)

@@ -1,4 +1,4 @@
-(in-package :stumpwm)
+(in-package :hfj)
 
 (run-commands "grename Emacs"
               "gnewbg Browser"

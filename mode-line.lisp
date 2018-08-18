@@ -1,4 +1,4 @@
-(in-package :stumpwm)
+(in-package :hfj)
 (ql:quickload "clx-truetype")
 
 (setf *mode-line-position* :bottom)
@@ -26,6 +26,6 @@
 
 (setf *mode-line-timeout* 1)
 
-(unless (head-mode-line (current-head))
+(unless (stumpwm::head-mode-line (current-head))
   (toggle-mode-line (current-screen) (current-head))
   (run-commands "stumptray"))

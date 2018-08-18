@@ -1,4 +1,4 @@
-(in-package :stumpwm)
+(in-package :hfj)
 
 (defun my-debug (&rest data)
   (with-open-file (stream (uiop:subpathname* (user-homedir-pathname) "tmp/stumpwm.txt")

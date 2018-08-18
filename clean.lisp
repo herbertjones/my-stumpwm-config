@@ -1,4 +1,4 @@
-(in-package :stumpwm)
+(in-package :hfj)
 
 (clear-window-placement-rules)
 

@@ -1,4 +1,4 @@
-(in-package :stumpwm)
+(in-package :hfj)
 
 (defcommand windowlist-all () ()
   (let* ((windows (sort (copy-list (all-windows)) #'string-lessp :key #'window-name))

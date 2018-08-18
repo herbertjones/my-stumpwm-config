@@ -1,4 +1,4 @@
-(in-package :stumpwm)
+(in-package :hfj)
 (ql:quickload "str")
 
 (defun string-escape (str)

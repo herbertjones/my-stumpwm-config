@@ -1,4 +1,4 @@
-(in-package :stumpwm)
+(in-package :hfj)
 
 (defun alist-define-keys (map alist)
   "define key using alist."

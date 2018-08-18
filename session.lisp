@@ -1,4 +1,4 @@
-(in-package :stumpwm)
+(in-package :hfj)
 
 (defmacro if-sure (&body body)
   `(when (equal :yes (second (select-from-menu (current-screen)
