@@ -5,15 +5,18 @@
 
 (set-module-dir (uiop:subpathname* (user-homedir-pathname) "opt/stumpwm/contrib/"))
 (setf *config-path* (uiop:subpathname* (user-homedir-pathname) ".config/stumpwm/"))
+(defun load-conf (name)
+  "Load a config file in the *config-path*."
+  (load (uiop:subpathname* *config-path* name)))
 
 (setf *window-border-style* :thin)
 (setf *normal-border-width* 1)
 
-(load (uiop:subpathname* *config-path* "debug.lisp"))
-(load (uiop:subpathname* *config-path* "scratchpad.lisp"))
-(load (uiop:subpathname* *config-path* "applications.lisp"))
-(load (uiop:subpathname* *config-path* "frame-placement.lisp"))
-(load (uiop:subpathname* *config-path* "session.lisp"))
-(load (uiop:subpathname* *config-path* "binds.lisp"))
-(load (uiop:subpathname* *config-path* "mouse.lisp"))
-(load (uiop:subpathname* *config-path* "mode-line.lisp"))
+(load-conf "debug.lisp")
+(load-conf "scratchpad.lisp")
+(load-conf "applications.lisp")
+(load-conf "frame-placement.lisp")
+(load-conf "session.lisp")
+(load-conf "binds.lisp")
+(load-conf "mouse.lisp")
+(load-conf "mode-line.lisp")
