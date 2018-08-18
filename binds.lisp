@@ -7,7 +7,7 @@
 
 (defmacro create-map (var key &key (on *top-map*))
   `(progn
-     (defvar ,var (make-sparse-keymap))
+     (defparameter ,var (make-sparse-keymap))
      (define-key ,on (kbd ,key) ',var)
      ,var))
 
@@ -30,8 +30,6 @@
                      ("s-;" . "colon")
 
                      ("s-b" . "fullscreen")
-
-                     ("s-r" . "loadrc")
 
                      ("s-z" . "gprev")
                      ("s-x" . "gnext")
