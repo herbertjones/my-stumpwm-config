@@ -1,10 +1,14 @@
-(in-package :hfj)
+(in-package :cl-user)
+(defpackage hfj.mode-line
+  (:use :cl :hfj :stumpwm))
+(in-package :hfj.mode-line)
+
 (ql:quickload "clx-truetype")
 
 (setf *mode-line-position* :bottom)
 
 ;; (load-module "app-menu")
-;; (load-module "battery-portable")
+(load-module "battery-portable")
 (load-module "cpu")
 (load-module "mem")
 (load-module "net")
@@ -15,14 +19,26 @@
 (xft:cache-fonts)
 (set-font (make-instance 'xft:font :family "Iosevka Light" :subfamily "Regular" :size 10))
 
-(setf *window-format*
-      ;; "%m%n%s%50t" ;; Default
-      "%m%s%20c")
+(setf *window-format* "%m%s%20c")
 
-(setf *screen-mode-line-format*
-      ;; (list "%g | " '(:eval (run-shell-command "date" t)))
-      ;; "[^B%n^b] %W"  ;; Original
-      "%g | %W^> | %c%M%I %d       ")
+(let ((battery "BAT: %B")
+      (groups "%g")
+      (sep " | ")
+      (align-right "^>")
+      (windows "%W")
+      (cpu "%c")
+      (cpu-bar "%C")
+      (cpu-temp "%t")
+      (cpu-freq "%f")
+      (mem "%M")
+      (wifi "%I")
+      (date "%d")
+      (_ " ")
+      (right-padding (make-string 7 :initial-element #\Space)))
+  (let ((left (list groups sep windows))
+        (right (list battery _ cpu mem wifi _ date right-padding)))
+    (setf *screen-mode-line-format*
+          (list left align-right sep right))))
 
 (setf *mode-line-timeout* 1)
 
