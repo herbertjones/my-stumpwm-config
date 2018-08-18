@@ -2,8 +2,8 @@
 
 (run-commands "grename Emacs"
               "gnewbg Browser"
-              "gnewbg Email"
-              "gnewbg Terminal")
+              "gnewbg Terminal"
+              "gnewbg Email")
 
 (define-frame-preference "Browser"
     (0 t   t :class "Firefox")
