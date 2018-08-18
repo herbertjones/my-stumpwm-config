@@ -4,7 +4,6 @@
               "gnewbg Browser"
               "gnewbg Email"
               "gnewbg Terminal"
-              "gnewbg Communication"
               "gnewbg Security")
 
 (clear-window-placement-rules)
@@ -15,9 +14,6 @@
 
 (define-frame-preference "Email"
     (0 t   t :class "Thunderbird"))
-
-(define-frame-preference "Communication"
-    (0 t   t :class "yakyak"))
 
 (define-frame-preference "Terminal"
     (0 t t :title "tmux - main"))
