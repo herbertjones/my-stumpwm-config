@@ -11,12 +11,14 @@
           when (not (member win ignored))
             do (pull-window win frame-a))))
 
-(defun scratchpad-toggle (cmd props &optional (ratio 1/2) (direction :right)
+(defun scratchpad-toggle (cmd props &key (ratio 1/2) (direction '(:bottom :right))
                                   (all-groups *run-or-raise-all-groups*)
                                   (all-screens *run-or-raise-all-screens*))
   "Display a window in the current group, splitting or focusing.
 
-Direction can be one of: :top :bottom :left :right"
+Direction can be one of: :top :bottom :left :right
+ Or a list with the sides that may be chosen.  The shorter edge decide the split.
+"
   (let* ((group (current-group))
          (matches (find-matching-windows props all-groups all-screens))
          (cframe (tile-group-current-frame group)))
@@ -32,7 +34,17 @@ Direction can be one of: :top :bottom :left :right"
                                  (tree (tile-group-frame-head wgroup head)))
                             (when (and (null (frame-window wframe))
                                        (not (atom tree)))
-                              (remove-split wgroup)))))
+                              (remove-split wgroup))))
+                        (decide-direction ()
+                          (cond ((listp direction)
+                                 (let* ((w (frame-width cframe))
+                                        (h (frame-height cframe))
+                                        (allowed (if (< w h)
+                                                     '(:top :bottom)
+                                                     '(:left :right))))
+                                   (or (car (intersection allowed direction)) :bottom)))
+                                (t
+                                 direction))))
                  (cond
                    ;; Currently focused on scratchpad
                    ((and (eq cframe wframe)
@@ -46,8 +58,9 @@ Direction can be one of: :top :bottom :left :right"
                     (move-window-to-group win group)
                     (maybe-remove-old-split))
                    ;; Scratchpad must be displayed
-                   (t (let* ((swapped (member direction '(:top :left)))
-                             (dir (if (member direction '(:bottom :top)) :row :column))
+                   (t (let* ((decided-direction (decide-direction))
+                             (swapped (member decided-direction '(:top :left)))
+                             (dir (if (member decided-direction '(:bottom :top)) :row :column))
                              (r (if swapped ratio (- 1 ratio)))
                              (old-num (frame-number cframe))
                              (new-num (split-frame group dir r))
