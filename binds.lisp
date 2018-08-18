@@ -87,7 +87,7 @@
                      ("n" . "pull-hidden-next")
                      ("p" . "pull-hidden-previous")
 
-                     ("w" . "windowlist")
+                     ("w" . "windowlist-all")
                      ("s-w" . "pull-hidden-other")
 
                      ("g" . "gmove")
