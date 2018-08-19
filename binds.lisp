@@ -162,6 +162,6 @@
 (alist-define-keys (create-map *applications-emacs* "e" :on *applications-map*)
                    '(("e" . "display-named-emacs main")))
 (loop for c across "abcdfghijklmnopqrstuvwxyz0123456789"
-      do (let ((key (kbd (format nil "~C"c)))
+      do (let ((key (kbd (string c)))
                (action (format nil "display-named-emacs ~C" c)))
            (define-key *applications-emacs* key action)))
