@@ -19,7 +19,7 @@
 (xft:cache-fonts)
 (set-font (make-instance 'xft:font :family "Iosevka Light" :subfamily "Regular" :size 10))
 
-(setf *window-format* "%m%s%20c")
+(setf *window-format* "%m%s%n.%20c")
 
 (let ((battery "BAT: %B")
       (groups "%g")

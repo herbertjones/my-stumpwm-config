@@ -98,6 +98,10 @@
                      ("v" . "hsplit")
                      ("d" . "remove")
                      ("r" . "iresize-hfj")))
+(loop for i from 0 to 9
+      do (let ((key (kbd (write-to-string i)))
+               (action (format nil "select-window-by-number ~A" i)))
+           (define-key *window-map* key action)))
 
 (alist-define-keys (create-map *window-move-map* "m" :on *window-map*)
                    '(("h" . "move-window left")
