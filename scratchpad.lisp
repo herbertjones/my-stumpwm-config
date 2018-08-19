@@ -48,20 +48,26 @@
     (stumpwm::focus-frame group target-frame)
     (stumpwm::sync-all-frame-windows group)))
 
-(defun scratchpad-toggle (cmd props &key (ratio *default-ratio*) (direction '(:below :right))
-                                  (all-groups *run-or-raise-all-groups*)
-                                  (all-screens *run-or-raise-all-screens*))
+(defun scratchpad-toggle (props &key cmd
+                              (ratio *default-ratio*)
+                              (direction '(:below :right))
+                              (all-groups *run-or-raise-all-groups*)
+                              (all-screens *run-or-raise-all-screens*))
   "Display a window in the current group, splitting or focusing.
 
 Direction can be one of: :above :below :left :right
  Or a list with the sides that may be chosen.  The shorter edge decide the split.
+
+Can optionally create the process if needed, however it will initially display
+in the current frame or by whatever rules have been set for new windows.
 "
   (let* ((group (current-group))
          (matches (stumpwm::find-matching-windows props all-groups all-screens))
          (current-frame (stumpwm::tile-group-current-frame group))
          (current-window (group-current-window group)))
     (cond ((null matches)
-           (run-shell-command cmd))
+           (when cmd
+             (run-shell-command cmd)))
           (t (let* ((scratchpad-window (car matches))
                     (moved-from-frame (stumpwm::window-frame scratchpad-window))
                     (moved-from-group (window-group scratchpad-window)))
