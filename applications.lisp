@@ -81,4 +81,4 @@
     (scratchpad:scratchpad-toggle (getf plist :cmd)
                                   `(:title ,(getf plist :title))
                                   :ratio (- 1 (/ 5 7))
-                                  :direction '(:bottom :left))))
+                                  :direction '(:below :left))))

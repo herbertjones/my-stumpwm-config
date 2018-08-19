@@ -8,12 +8,12 @@
 
 (defvar *default-ratio* 1/2)
 
-(defun scratchpad-toggle (cmd props &key (ratio *default-ratio*) (direction '(:bottom :right))
+(defun scratchpad-toggle (cmd props &key (ratio *default-ratio*) (direction '(:below :right))
                                   (all-groups *run-or-raise-all-groups*)
                                   (all-screens *run-or-raise-all-screens*))
   "Display a window in the current group, splitting or focusing.
 
-Direction can be one of: :top :bottom :left :right
+Direction can be one of: :above :below :left :right
  Or a list with the sides that may be chosen.  The shorter edge decide the split.
 "
   (let* ((group (current-group))
@@ -38,9 +38,9 @@ Direction can be one of: :top :bottom :left :right
                                  (let* ((w (frame-width cframe))
                                         (h (frame-height cframe))
                                         (allowed (if (< w h)
-                                                     '(:top :bottom)
+                                                     '(:above :below)
                                                      '(:left :right))))
-                                   (or (car (intersection allowed direction)) :bottom)))
+                                   (or (car (intersection allowed direction)) :below)))
                                 (t
                                  direction))))
                  (cond
@@ -57,8 +57,8 @@ Direction can be one of: :top :bottom :left :right
                     (maybe-remove-old-split))
                    ;; Scratchpad must be displayed
                    (t (let* ((decided-direction (decide-direction))
-                             (swapped (member decided-direction '(:top :left)))
-                             (dir (if (member decided-direction '(:bottom :top)) :row :column))
+                             (swapped (member decided-direction '(:above :left)))
+                             (dir (if (member decided-direction '(:below :above)) :row :column))
                              (r (if swapped ratio (- 1 ratio)))
                              (old-num (stumpwm::frame-number cframe))
                              (new-num (stumpwm::split-frame group dir r))
