@@ -23,7 +23,7 @@
                 (allowed (if (< w h)
                              '(:above :below)
                              '(:left :right))))
-           (or (car (intersection allowed direction)) :below)))
+           (or (first (intersection allowed direction)) :below)))
         (t
          direction)))
 
@@ -68,7 +68,7 @@ in the current frame or by whatever rules have been set for new windows.
     (cond ((null matches)
            (when cmd
              (run-shell-command cmd)))
-          (t (let* ((scratchpad-window (car matches))
+          (t (let* ((scratchpad-window (first matches))
                     (moved-from-frame (stumpwm::window-frame scratchpad-window))
                     (moved-from-group (window-group scratchpad-window)))
                (cond
@@ -84,13 +84,12 @@ in the current frame or by whatever rules have been set for new windows.
                   (move-window-to-group scratchpad-window group)
                   (maybe-remove-old-split moved-from-group moved-from-frame))
                  ;; Scratchpad needs a new frame
-                 (t
-                  (scratchpad-split-frame direction
-                                          ratio
-                                          group
-                                          current-frame
-                                          current-window
-                                          scratchpad-window
-                                          moved-from-group
-                                          moved-from-frame))))))))
+                 (t (scratchpad-split-frame direction
+                                            ratio
+                                            group
+                                            current-frame
+                                            current-window
+                                            scratchpad-window
+                                            moved-from-group
+                                            moved-from-frame))))))))
 

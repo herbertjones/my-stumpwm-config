@@ -6,7 +6,7 @@
                           :direction :output
                           :if-exists :append
                           :if-does-not-exist :create)
-    (format stream "~&~A" (car data))
-    (loop for item in (cdr data)
+    (format stream "~&~A" (first data))
+    (loop for item in (rest data)
           do (format stream " ~A" item))
     (terpri stream)))
