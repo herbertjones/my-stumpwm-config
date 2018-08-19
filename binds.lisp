@@ -139,7 +139,7 @@
                (action (format nil "gselect ~A" i)))
            (define-key *group-map* key action)))
 
-(alist-define-keys (create-map *group-map* "s-s")
+(alist-define-keys (create-map *systray-map* "s-s")
                    '(("j" . "stumptray-toggle-hidden-icons-visibility")
                      ("k" . "systray-toggle-icon-hiding")
 
