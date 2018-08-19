@@ -56,7 +56,7 @@
   "Reposition the mouse when a frame is removed."
   (banish-frame cur-frame))
 
-(defvar *original-focus-policy* nil)
+(defvar *original-focus-policy* :ignore)
 (defun enable ()
   "Enable mouse follows window mode."
   (setq *original-focus-policy* *mouse-focus-policy*)

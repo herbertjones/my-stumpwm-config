@@ -1,4 +1,5 @@
 (in-package :hfj)
+(export 'my-debug)
 
 (defun my-debug (&rest data)
   (with-open-file (stream (uiop:subpathname* (user-homedir-pathname) "tmp/stumpwm.txt")
