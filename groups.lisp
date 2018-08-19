@@ -1,9 +1,12 @@
 (in-package :hfj)
 
-(run-commands "grename Emacs"
-              "gnewbg Browser"
-              "gnewbg Terminal"
-              "gnewbg Email")
+(defvar *group-setup* nil)
+(unless *group-setup*
+  (run-commands "grename Emacs"
+                "gnewbg Browser"
+                "gnewbg Terminal"
+                "gnewbg Email")
+  (setf *group-setup* t))
 
 (define-frame-preference "Browser"
     (0 t   t :class "Firefox")
