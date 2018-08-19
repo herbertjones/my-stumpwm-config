@@ -2,21 +2,13 @@
 (defpackage scratchpad
   (:use :cl :stumpwm)
   (:export
-   scratchpad-toggle))
+   scratchpad-toggle
+   *default-ratio*))
 (in-package :scratchpad)
 
-(defun swap-frame-windows (group frame-a frame-b &optional ignored)
-  "Swap the contents of two frames."
-  (let* ((windows-a (stumpwm::frame-windows group frame-a))
-         (windows-b (stumpwm::frame-windows group frame-b)))
-    (loop for win in (reverse windows-a)
-          when (not (member win ignored))
-            do (stumpwm::pull-window win frame-b))
-    (loop for win in (reverse windows-b)
-          when (not (member win ignored))
-            do (stumpwm::pull-window win frame-a))))
+(defvar *default-ratio* 1/2)
 
-(defun scratchpad-toggle (cmd props &key (ratio 1/2) (direction '(:bottom :right))
+(defun scratchpad-toggle (cmd props &key (ratio *default-ratio*) (direction '(:bottom :right))
                                   (all-groups *run-or-raise-all-groups*)
                                   (all-screens *run-or-raise-all-screens*))
   "Display a window in the current group, splitting or focusing.
@@ -26,7 +18,8 @@ Direction can be one of: :top :bottom :left :right
 "
   (let* ((group (current-group))
          (matches (stumpwm::find-matching-windows props all-groups all-screens))
-         (cframe (stumpwm::tile-group-current-frame group)))
+         (cframe (stumpwm::tile-group-current-frame group))
+         (cwindow (group-current-window group)))
     (cond ((null matches)
            (run-shell-command cmd))
           (t (let* ((win (car matches))
@@ -69,11 +62,15 @@ Direction can be one of: :top :bottom :left :right
                              (r (if swapped ratio (- 1 ratio)))
                              (old-num (stumpwm::frame-number cframe))
                              (new-num (stumpwm::split-frame group dir r))
-                             (target-frame (stumpwm::frame-by-number group (if swapped old-num new-num))))
-                        (when swapped
-                          (swap-frame-windows group (stumpwm::frame-by-number group new-num) target-frame (list win)))
+                             (target-frame (stumpwm::frame-by-number group (if swapped old-num new-num)))
+                             (original-frame (stumpwm::frame-by-number group (if swapped new-num old-num))))
                         (move-window-to-group win group)
-                        (stumpwm::pull-window win target-frame)
+                        (maybe-remove-old-split)
+                        (when swapped
+                          (stumpwm::migrate-frame-windows group target-frame original-frame))
+                        (stumpwm::pull-window win target-frame nil)
+                        (when cwindow
+                          (stumpwm::pull-window cwindow original-frame nil))
                         (stumpwm::focus-frame group target-frame)
-                        (maybe-remove-old-split))))))))))
+                        (stumpwm::sync-all-frame-windows group))))))))))
 
