@@ -58,12 +58,16 @@
                      ("S-XF86AudioLowerVolume" . "amixer -c 0 sset Capture 1-")
 
                      ("XF86AudioMicMute" . "amixer sset Capture,0 toggle")))
-
 (loop for i from 0 to 9
-      do (define-key *top-map* (kbd (format nil "s-~A" i)) (format nil "gselect ~A" i)))
+      do (let ((key (kbd (format nil "s-~A" i)))
+               (action (format nil "gselect ~A" i)))
+           (define-key *top-map* key action)))
+
 (loop for ch in '(#\) #\! #\@ #\# #\$ #\% #\^ #\& #\* #\()
       and i from 0 to 9
-      do (define-key *top-map* (kbd (format nil "s-~A" ch)) (format nil "gmove ~A" i)))
+      do (let ((key (kbd (format nil "s-~A" ch)))
+               (action (format nil "gmove ~A" i)))
+           (define-key *top-map* key action)))
 
 (alist-define-keys (create-map *frame-map* "s-f")
                    '(("f" . "frame-windowlist")
@@ -131,10 +135,9 @@
                      ("q" . "gkill")
                      ("r" . "grename")))
 (loop for i from 0 to 9
-      do (define-key
-             *group-map*
-             (kbd (format nil "~A" i))
-           (format nil "gselect ~A" i)))
+      do (let ((key (kbd (format nil "~A" i)))
+               (action (format nil "gselect ~A" i)))
+           (define-key *group-map* key action)))
 
 (alist-define-keys (create-map *group-map* "s-s")
                    '(("j" . "stumptray-toggle-hidden-icons-visibility")
@@ -159,4 +162,6 @@
 (alist-define-keys (create-map *applications-emacs* "e" :on *applications-map*)
                    '(("e" . "display-named-emacs main")))
 (loop for c across "abcdfghijklmnopqrstuvwxyz0123456789"
-      do (define-key *applications-emacs* (kbd (format nil "~C"c)) (format nil "display-named-emacs ~C" c)))
+      do (let ((key (kbd (format nil "~C"c)))
+               (action (format nil "display-named-emacs ~C" c)))
+           (define-key *applications-emacs* key action)))
