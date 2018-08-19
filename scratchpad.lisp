@@ -66,7 +66,7 @@ Direction can be one of: :above :below :left :right
                     (moved-from-frame (stumpwm::window-frame scratchpad-window))
                     (moved-from-group (window-group scratchpad-window)))
                (cond
-                 ;; Currently focused on scratchpad
+                 ;; Currently focused on scratchpad; Hide it
                  ((and (eq current-frame moved-from-frame)
                        (eq scratchpad-window (stumpwm::frame-window current-frame)))
                   (remove-split))
@@ -77,7 +77,7 @@ Direction can be one of: :above :below :left :right
                  ((null (stumpwm::frame-window current-frame))
                   (move-window-to-group scratchpad-window group)
                   (maybe-remove-old-split moved-from-group moved-from-frame))
-                 ;; Scratchpad must be displayed
+                 ;; Scratchpad needs a new frame
                  (t
                   (scratchpad-split-frame direction
                                           ratio
