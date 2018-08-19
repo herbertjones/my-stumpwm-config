@@ -15,7 +15,8 @@
                (not (atom tree)))
       (remove-split moved-from-group))))
 
-(defun decide-direction (current-frame direction)
+(defun flatten-direction (current-frame direction)
+  "Convert direction list into single direction."
   (cond ((listp direction)
          (let* ((w (frame-width current-frame))
                 (h (frame-height current-frame))
@@ -26,9 +27,10 @@
         (t
          direction)))
 
-(defun show-scratchpad (direction ratio group current-frame current-window
-                    scratchpad-window moved-from-group moved-from-frame)
-  (let* ((decided-direction (decide-direction current-frame direction))
+(defun scratchpad-split-frame (direction ratio group current-frame current-window
+                           scratchpad-window moved-from-group moved-from-frame)
+  "Create a new frame and place the scratchpad in it."
+  (let* ((decided-direction (flatten-direction current-frame direction))
          (swapped (member decided-direction '(:above :left)))
          (dir (if (member decided-direction '(:below :above)) :row :column))
          (r (if swapped ratio (- 1 ratio)))
@@ -77,12 +79,12 @@ Direction can be one of: :above :below :left :right
                   (maybe-remove-old-split moved-from-group moved-from-frame))
                  ;; Scratchpad must be displayed
                  (t
-                  (show-scratchpad direction
-                                   ratio
-                                   group
-                                   current-frame
-                                   current-window
-                                   scratchpad-window
-                                   moved-from-group
-                                   moved-from-frame))))))))
+                  (scratchpad-split-frame direction
+                                          ratio
+                                          group
+                                          current-frame
+                                          current-window
+                                          scratchpad-window
+                                          moved-from-group
+                                          moved-from-frame))))))))
 
