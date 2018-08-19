@@ -52,15 +52,20 @@
   "Enable/Disable touchpad"
   (run-shell-command "toggle-touchpad"))
 
-(defcommand display-named-emacs (name) ((:string "Name: "))
-  "Raise emacs frame with given name"
+(defun emacs-name-plist (name)
   (let* ((title (format nil "Emacs - ~A" name))
          (name-str (format nil "(name . ~S)" title))
          (title-str (format nil "(title . ~S)" title))
          (form (format nil "(~A ~A)" name-str title-str))
          (args (list "/usr/bin/emacsclient" "-c" "-F" (string-escape form)))
          (cmd (str:join " " args)))
-    (run-or-raise cmd `(:title ,title))))
+    (list :title title
+          :cmd cmd)))
+
+(defcommand display-named-emacs (name) ((:string "Name: "))
+  "Raise emacs frame with given name"
+  (let ((plist (emacs-name-plist name)))
+    (run-or-raise (getf plist :cmd) `(:title ,(getf plist :title)))))
 
 (defcommand show-yakyak () ()
   "Show Yakyak"
@@ -69,3 +74,11 @@
 (defcommand run-yakyak () ()
   "Run Yakyak"
   (run-or-raise "yakyak" '(:class "yakyak")))
+
+(defcommand emacs-scratchpad () ()
+  "Show or hide the emacs scratchpad."
+  (let ((plist (emacs-name-plist "scratchpad")))
+    (scratchpad:scratchpad-toggle (getf plist :cmd)
+                                  `(:title ,(getf plist :title))
+                                  :ratio (- 1 (/ 5 7))
+                                  :direction '(:bottom :left))))

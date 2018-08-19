@@ -7,8 +7,8 @@
 
 (defun swap-frame-windows (group frame-a frame-b &optional ignored)
   "Swap the contents of two frames."
-  (let* ((windows-a (frame-windows group frame-a))
-         (windows-b (frame-windows group frame-b)))
+  (let* ((windows-a (stumpwm::frame-windows group frame-a))
+         (windows-b (stumpwm::frame-windows group frame-b)))
     (loop for win in (reverse windows-a)
           when (not (member win ignored))
             do (stumpwm::pull-window win frame-b))
