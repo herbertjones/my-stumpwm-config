@@ -19,13 +19,31 @@
 (xft:cache-fonts)
 (set-font (make-instance 'xft:font :family "Iosevka Light" :subfamily "Regular" :size 10))
 
-(setf *window-format* "%m%s%n.%20c")
+(defun mode-line-hidden-windows (ml)
+  (let* ((group (stumpwm::mode-line-current-group ml))
+         (current-frame (stumpwm::tile-group-current-frame group))
+         (all (stumpwm::frame-windows group current-frame))
+         ;; (non-top (set-difference all (stumpwm::top-windows)))
+         )
+    (format nil "~{~a~^ | ~}"
+            (mapcar (lambda (w)
+                      (let ((str (stumpwm::format-expand *window-formatters*
+                                                         *window-format*
+                                                         w)))
+                        (cond ((eq w (stumpwm::current-window)) (stumpwm::fmt-highlight str))
+                              ;; ((find w non-top) (stumpwm::fmt-hidden str))
+                              (t str))))
+                    (stumpwm::sort1 all #'< :key #'window-number)))))
+
+(add-screen-mode-line-formatter #\V #'mode-line-hidden-windows)
+
+(setf *window-format* "%m%s%n.%8c - %20t")
 
 (let ((battery "BAT: %B")
       (groups "%g")
       (sep " | ")
       (align-right "^>")
-      (windows "%W")
+      (hidden-windows "%V")
       (cpu "%c")
       (cpu-bar "%C")
       (cpu-temp "%t")
@@ -35,7 +53,7 @@
       (date "%d")
       (_ " ")
       (right-padding (make-string 7 :initial-element #\Space)))
-  (let ((left (list groups sep windows))
+  (let ((left (list groups sep hidden-windows))
         (right (list battery _ cpu mem wifi _ date right-padding)))
     (setf *screen-mode-line-format*
           (list left align-right sep right))))
