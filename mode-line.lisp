@@ -19,19 +19,30 @@
 (xft:cache-fonts)
 (set-font (make-instance 'xft:font :family "Iosevka Light" :subfamily "Regular" :size 10))
 
+
+(defun only-float-windows (windows)
+  "Mirror of only-tile-windows."
+  (remove-if-not (lambda (w)
+                   (typep w 'stumpwm::float-window))
+                 windows))
+
+(defun group-float-windows (group)
+  "Mirror of group-tile-windows."
+  (only-float-windows (stumpwm::group-windows group)))
+
 (defun mode-line-hidden-windows (ml)
   (let* ((group (stumpwm::mode-line-current-group ml))
          (current-frame (stumpwm::tile-group-current-frame group))
-         (all (stumpwm::frame-windows group current-frame))
-         ;; (non-top (set-difference all (stumpwm::top-windows)))
-         )
+         (all (concatenate 'list
+                           (group-float-windows group)
+                           (stumpwm::frame-windows group current-frame))))
     (format nil "~{~a~^ | ~}"
             (mapcar (lambda (w)
                       (let ((str (stumpwm::format-expand *window-formatters*
                                                          *window-format*
                                                          w)))
-                        (cond ((eq w (stumpwm::current-window)) (stumpwm::fmt-highlight str))
-                              ;; ((find w non-top) (stumpwm::fmt-hidden str))
+                        (cond ((eq w (stumpwm::current-window))
+                               (stumpwm::fmt-highlight str))
                               (t str))))
                     (stumpwm::sort1 all #'< :key #'window-number)))))
 
