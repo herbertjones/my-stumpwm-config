@@ -3,6 +3,7 @@
 (clear-window-placement-rules)
 
 ;; Clear hooks I use on restart
+(remove-all-hooks *new-window-hook*)
 (remove-all-hooks *focus-group-hook*)
 (remove-all-hooks *focus-window-hook*)
 (remove-all-hooks *focus-frame-hook*)
