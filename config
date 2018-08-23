@@ -15,6 +15,7 @@
 
 (load-conf "clean.lisp")
 (load-conf "debug.lisp")
+(load-conf "emacs.lisp")
 (load-conf "window.lisp")
 (load-conf "scratchpad.lisp")
 (load-conf "applications.lisp")
