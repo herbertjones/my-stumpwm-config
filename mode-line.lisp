@@ -50,7 +50,17 @@
 
 (setf *window-format* "%m%s%n.%8c - %20t")
 
-(let ((battery "BAT: %B")
+(defun has-battery-p ()
+  (or (probe-file "/sys/class/power_supply/BAT0")
+      (probe-file "/sys/class/power_supply/BAT1")))
+
+(defun has-wireless-p ()
+  (loop
+    for path in (directory #P"/sys/class/net/*")
+      thereis (probe-file (merge-pathnames (make-pathname :directory '(:relative "wireless"))
+                                           path))))
+
+(let ((battery (and (has-battery-p) "BAT: %B"))
       (groups "%g")
       (sep " | ")
       (align-right "^>")
@@ -60,12 +70,12 @@
       (cpu-temp "%t")
       (cpu-freq "%f")
       (mem "%M")
-      (wifi "%I")
+      (wifi (and (has-wireless-p) "%I"))
       (date "%d")
       (_ " ")
       (right-padding (make-string 7 :initial-element #\Space)))
   (let ((left (list groups sep hidden-windows))
-        (right (list battery _ cpu mem wifi _ date right-padding)))
+        (right (list battery (and battery _) cpu mem wifi _ date right-padding)))
     (setf *screen-mode-line-format*
           (list left align-right sep right))))
 
