@@ -58,12 +58,9 @@
          (timer (run-with-timer timeout nil
                                 #'(lambda ()
                                     ;; Remove hooks after period of time should something go wrong.
-                                    (my-debug "Timed out!")
                                     (when focus-window-handler
-                                      (my-debug "Removed focus-window-handler")
                                       (remove-hook *focus-window-hook* focus-window-handler))
                                     (when new-window-handler
-                                      (my-debug "Removed new-window-handler")
                                       (remove-hook *new-window-hook* new-window-handler))))))
     (setf new-window-handler
           #'(lambda (new-window)
