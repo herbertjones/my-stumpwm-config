@@ -1,18 +1,16 @@
 ;; -*-lisp-*-
-
 (in-package :cl-user)
 (defpackage hfj
-  (:use :cl :stumpwm))
+  (:use :cl :stumpwm :anaphora))
 (in-package :hfj)
-
-(ql:quickload "xembed")
 
 (set-module-dir (uiop:subpathname* (user-homedir-pathname) "opt/stumpwm/contrib/"))
 (setf *config-path* (uiop:subpathname* (user-homedir-pathname) ".config/stumpwm/"))
-(defun load-conf (name)
-  "Load a config file in the *config-path*."
-  (load (uiop:subpathname* *config-path* name)))
+(load (uiop:subpathname* *config-path* "preload.lisp"))
 
+;; Place local hooks in local.lisp.  Use after-load-conf to attach to sections.
+(awhen (probe-file (uiop:subpathname* *config-path* "local.lisp"))
+  (load it))
 (load-conf "clean.lisp")
 (load-conf "debug.lisp")
 (load-conf "emacs.lisp")
