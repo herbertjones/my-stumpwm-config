@@ -1,11 +1,12 @@
 (in-package :hfj)
+(ql:quickload "str")
 (export '(add-menu-item))
 
 (defparameter *default-menu-name* "Menu")
 
 (defparameter *default-menu*
   '(("Apps" (:submenu *default-apps-menu*))
-    ("Util" (:submenu *default-util-menu*))
+    ("Utility" (:submenu *default-util-menu*))
     ("StumpWM" (:submenu *default-stumpwm-menu*))))
 
 (defparameter *default-apps-menu* nil)
@@ -196,3 +197,17 @@
                   (t (replace-menu-f menu name (new-menus remaining f))))))
              ;; Descend: Path is new
              (t (replace-menu-f menu name (new-menus remaining f)))))))))
+
+(defmacro defapp (name (&rest args) (&rest args-meta) (&rest menu-path) &body body)
+  "Create command and add to Apps menu at the same time."
+  `(progn
+     (defcommand ,name (,@args) (,@args-meta)
+       ,@body)
+     (add-menu-item *default-apps-menu* (list ,@menu-path) ',name)))
+
+(defmacro defutil (name (&rest args) (&rest args-meta) (&rest menu-path) &body body)
+  "Create command and add to Utility menu at the same time."
+  `(progn
+     (defcommand ,name (,@args) (,@args-meta)
+       ,@body)
+     (add-menu-item *default-util-menu* (list ,@menu-path) ',name)))

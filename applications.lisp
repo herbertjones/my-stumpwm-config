@@ -14,18 +14,6 @@
   (loop for path in (str:split ":" (uiop:getenv "PATH") :omit-nulls t)
           thereis (probe-file (merge-pathnames name (make-pathname :directory path)))))
 
-(defmacro defapp (name (&rest args) (&rest args-meta) (&rest menu-path) &body body)
-  `(progn
-     (defcommand ,name (,@args) (,@args-meta)
-       ,@body)
-     (add-menu-item *default-apps-menu* (list ,@menu-path) ',name)))
-
-(defmacro defutil (name (&rest args) (&rest args-meta) (&rest menu-path) &body body)
-  `(progn
-     (defcommand ,name (,@args) (,@args-meta)
-       ,@body)
-     (add-menu-item *default-util-menu* (list ,@menu-path) ',name)))
-
 (defcommand xbacklight (args) ((:shell "Arguments: "))
   "Run xbacklight"
   (run-shell-command (format nil "xbacklight ~S" args)))

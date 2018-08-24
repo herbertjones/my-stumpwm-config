@@ -2,7 +2,6 @@
 (export '(after-load-conf))
 
 (ql:quickload "xembed")
-(ql:quickload "anaphora")
 
 (defparameter *load-hooks* '())
 

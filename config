@@ -1,4 +1,5 @@
 ;; -*-lisp-*-
+(ql:quickload "anaphora")
 (in-package :cl-user)
 (defpackage hfj
   (:use :cl :stumpwm :anaphora))
