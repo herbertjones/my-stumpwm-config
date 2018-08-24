@@ -9,6 +9,11 @@
   "Title for named terminal"
   (format nil "tmux - ~A" name))
 
+(defun probe-file-env-paths (name)
+  "Probe file across paths in $PATH.  Returns first pathname found or nil."
+  (loop for path in (str:split ":" (uiop:getenv "PATH") :omit-nulls t)
+          thereis (probe-file (merge-pathnames name (make-pathname :directory path)))))
+
 (defcommand xbacklight (args) ((:shell "Arguments: "))
   "Run xbacklight"
   (run-shell-command (format nil "xbacklight ~S" args)))
@@ -42,7 +47,10 @@
 
 (defcommand run-thunderbird () ()
   "Run Thunderbird"
-  (run-or-raise "thunderbird-bin" '(:class "Thunderbird")))
+  (let ((path (loop for file in '("thunderbird-bin" "thunderbird")
+                      thereis (probe-file-env-paths file))))
+    (when path
+      (run-or-raise (namestring path) '(:class "Thunderbird")))))
 
 (defcommand run-keepassxc () ()
   "Run KeepassXC"
