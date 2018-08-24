@@ -68,24 +68,32 @@
                             row))))))
       (map 'list #'cons-nice-name menu))))
 
-(defun run-submenu (menu &optional path previous-menus)
+(defun run-submenu (menu &optional path previous-menus selected-entry)
   "Present menu to user."
   (let ((selection
           (let* ((title (str:join "/" (reverse path)))
                  (smenu (sort (append-menu-names title menu)
                               #'(lambda (a b)
                                   (string-lessp (second a)
-                                                (second b))))))
+                                                (second b)))))
+                 (pos (or (and selected-entry
+                               (position-if #'(lambda (row)
+                                                (string-equal selected-entry
+                                                              (second row)))
+                                            smenu))
+                          0)))
             (select-from-menu (current-screen)
                               smenu
-                              title))))
+                              title
+                              pos))))
     (cond
       ;; Ascend to previous
       ((and (null selection)
             previous-menus)
        (run-submenu (first previous-menus)
                     (rest path)
-                    (rest previous-menus)))
+                    (rest previous-menus)
+                    (first path)))
       ;; End
       ((null selection)
        nil)
