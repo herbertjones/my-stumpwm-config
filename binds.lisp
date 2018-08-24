@@ -39,6 +39,8 @@
 
                      ("s-q" . "session-menu")
 
+                     ("s-o" . "show-menu")
+
                      ("s-`" . "show-yakyak")
                      ("s-TAB" . "emacs-scratchpad")
 
