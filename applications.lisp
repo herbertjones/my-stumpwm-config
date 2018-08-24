@@ -83,11 +83,3 @@
   "Show Yakyak"
   (scratchpad:scratchpad-toggle '(:class "yakyak")
                                 :cmd "yakyak"))
-
-(defcommand emacs-scratchpad () ()
-  "Show or hide the emacs scratchpad."
-  (let ((plist (emacs-name-plist "scratchpad")))
-    (scratchpad:scratchpad-toggle `(:title ,(getf plist :title))
-                                  :cmd (getf plist :cmd)
-                                  :ratio (- 1 (/ 5 7))
-                                  :direction '(:below :left))))

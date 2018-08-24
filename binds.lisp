@@ -42,7 +42,6 @@
                      ("s-o" . "show-menu")
 
                      ("s-`" . "show-yakyak")
-                     ("s-TAB" . "emacs-scratchpad")
 
                      ("XF86ScreenSaver" . "lock")
 
