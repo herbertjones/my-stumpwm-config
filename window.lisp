@@ -33,9 +33,9 @@
   (frame-height frame))
 
 (defmethod get-x ((window stumpwm::window))
-  (window-x window))
+  (get-x (window-parent window)))
 (defmethod get-y ((window stumpwm::window))
-  (window-y window))
+  (get-y (window-parent window)))
 (defmethod get-width ((window stumpwm::window))
   (window-width window))
 (defmethod get-height ((window stumpwm::window))
