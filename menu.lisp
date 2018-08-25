@@ -198,16 +198,20 @@
              ;; Descend: Path is new
              (t (replace-menu-f menu name (new-menus remaining f)))))))))
 
-(defmacro defapp (name (&rest args) (&rest args-meta) (&rest menu-path) &body body)
-  "Create command and add to Apps menu at the same time."
+(defmacro def-menu-command (name (&rest args) (&rest args-meta) (menu &rest menu-path) &body body)
+  "Create command and add to menu at the same time."
   `(progn
      (defcommand ,name (,@args) (,@args-meta)
        ,@body)
-     (add-menu-item *default-apps-menu* (list ,@menu-path) ',name)))
+     (add-menu-item ,menu (list ,@menu-path) ',name)))
+
+(defmacro defapp (name (&rest args) (&rest args-meta) (&rest menu-path) &body body)
+  "Create command and add to Apps menu at the same time."
+  `(def-menu-command ,name (,@args) (,@args-meta) (*default-apps-menu* ,@menu-path)
+       ,@body))
 
 (defmacro defutil (name (&rest args) (&rest args-meta) (&rest menu-path) &body body)
   "Create command and add to Utility menu at the same time."
-  `(progn
-     (defcommand ,name (,@args) (,@args-meta)
-       ,@body)
-     (add-menu-item *default-util-menu* (list ,@menu-path) ',name)))
+  `(def-menu-command ,name (,@args) (,@args-meta) (*default-util-menu* ,@menu-path)
+       ,@body))
+

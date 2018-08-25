@@ -3,10 +3,10 @@
 (ql:quickload "swank")
 (swank-loader:init)
 
-(defcommand start-swank () ()
+(def-menu-command start-swank () () (*default-stumpwm-menu* "Start Swank")
   (swank:create-server :port 4004
                        :style swank:*communication-style*
                        :dont-close t))
 
-(defcommand stop-swank () ()
+(def-menu-command stop-swank () () (*default-stumpwm-menu* "Stop Swank")
   (swank:stop-server 4004))
