@@ -116,7 +116,7 @@
              (t
               (error "Unknown menu data: ~S" selection))))))))
 
-(defun show-menu (&optional (menu *default-menu*) (name *default-menu-name*))
+(defcommand show-menu (&optional (menu *default-menu*) (name *default-menu-name*)) ()
   (run-submenu menu (list name)))
 
 (defun descend-data (data)
