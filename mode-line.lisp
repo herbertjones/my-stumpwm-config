@@ -64,6 +64,7 @@
 
 (let ((battery (and (has-battery-p) "BAT: %B"))
       (groups "%g")
+      (current-group "%n")
       (sep " | ")
       (align-right "^>")
       (hidden-windows "%V")
@@ -76,7 +77,7 @@
       (date "%d")
       (_ " ")
       (right-padding (make-string 7 :initial-element #\Space)))
-  (let ((left (list groups sep hidden-windows))
+  (let ((left (list current-group sep hidden-windows))
         (right (list battery (and battery _) cpu mem wifi _ date right-padding)))
     (setf *screen-mode-line-format*
           (list left align-right sep right))))
