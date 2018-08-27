@@ -50,6 +50,8 @@
 
 (setf *window-format* "%m%s%n.%8c - %20t")
 
+(setf *group-format* "%s%t")
+
 (defun has-battery-p ()
   (or (probe-file "/sys/class/power_supply/BAT0")
       (probe-file "/sys/class/power_supply/BAT1")))

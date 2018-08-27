@@ -59,9 +59,9 @@
                      ("S-XF86AudioLowerVolume" . "amixer -c 0 sset Capture 1-")
 
                      ("XF86AudioMicMute" . "amixer sset Capture,0 toggle")))
-(loop for i from 0 to 9
+(loop for i from 1 to 9
       do (let ((key (kbd (format nil "s-~A" i)))
-               (action (format nil "gselect ~A" i)))
+               (action (format nil "fselect ~A" (1- i))))
            (define-key *top-map* key action)))
 
 (loop for ch in '(#\) #\! #\@ #\# #\$ #\% #\^ #\& #\* #\()
@@ -78,6 +78,10 @@
                      ("e" . "fclear")
                      ("m" . "only")
                      ("=" . "balance-frames")))
+(loop for i from 0 to 9
+      do (let ((key (kbd (format nil "~A" i)))
+               (action (format nil "fselect ~A" i)))
+           (define-key *frame-map* key action)))
 
 (alist-define-keys (create-map *window-map* "s-w")
                    '(("h" . "move-focus left")
