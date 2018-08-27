@@ -19,7 +19,7 @@
 (defmacro after-load-conf ((name) &body body)
   `(add-local-hook ,name
                    #'(lambda ()
-                       ,@body)))
+                       (eval ',@body))))
 (defun load-conf (name)
   "Load a config file in the *config-path*."
   (load (uiop:subpathname* *config-path* name))
