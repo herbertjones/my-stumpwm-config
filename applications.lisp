@@ -78,8 +78,3 @@
 (defapp run-yakyak () () ("IM")
   "Run Yakyak"
   (run-or-raise "yakyak" '(:class "yakyak")))
-
-(defcommand show-yakyak () ()
-  "Show Yakyak"
-  (scratchpad:scratchpad-toggle '(:class "yakyak")
-                                :cmd "yakyak"))
