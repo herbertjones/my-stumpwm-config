@@ -51,7 +51,7 @@
   (ratwarp 0 0)
   (run-commands "iresize"))
 
-(defun run-and-act-on-new-window (cmd props timeout function)
+(defun run-and-act-on-new-window (cmd props timeout on-create-f on-focus-f)
   "Run a command, setup a handler to apply a function to the new window once it's open."
   (let* (focus-window-handler
          timeout-handler
@@ -74,8 +74,11 @@
                             (remove-hook *focus-window-hook* focus-window-handler)
                             (setf focus-window-handler nil)
                             (cancel-timer timer)
-                            (funcall function new-window))))
-                (add-hook *focus-window-hook* focus-window-handler))))
+                            (when on-focus-f
+                              (funcall on-focus-f new-window)))))
+                (add-hook *focus-window-hook* focus-window-handler)
+                (when on-create-f
+                  (funcall on-create-f new-window)))))
     (add-hook *new-window-hook* new-window-handler)
     (run-shell-command cmd)))
 
@@ -83,6 +86,19 @@
                            &body body)
   "Execute command, on next new window matching properties, run the body.  If no
 properties given, next new window will be acted on."
-  `(run-and-act-on-new-window ,cmd ,properties ,timeout
-                              #'(lambda (,window)
-                                  ,@body)))
+  (let ((state 'config)
+        (init '())
+        (config '()))
+    (map nil #'(lambda (e)
+                 (case e
+                   (:config (setf state 'config))
+                   (:init (setf state 'init))
+                   (t (ecase state
+                        (init (push e init))
+                        (config (push e config))))))
+         body)
+    `(run-and-act-on-new-window ,cmd ,properties ,timeout
+                                #'(lambda (,window)
+                                    ,@(reverse init))
+                                #'(lambda (,window)
+                                    ,@(reverse config)))))
