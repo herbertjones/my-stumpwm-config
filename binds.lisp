@@ -41,7 +41,7 @@
 
                      ("s-o" . "show-menu")
 
-                     ("s-`" . "run-yakyak")
+                     ("s-`" . "scratchpad-float yakyak yakyak left")
 
                      ("XF86ScreenSaver" . "lock")
 
