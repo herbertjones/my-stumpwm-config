@@ -2,7 +2,8 @@
 (defpackage scratchpad
   (:use :cl :stumpwm)
   (:export #:scratchpad-toggle
-           #:*default-ratio*))
+           #:*default-ratio*
+           #:scratchpad-float))
 (in-package :scratchpad)
 
 (defvar *default-ratio* 1/2)
@@ -93,3 +94,76 @@ in the current frame or by whatever rules have been set for new windows.
                                             moved-from-group
                                             moved-from-frame))))))))
 
+(defvar *scratch-floats* '()
+  "Alist of names to windows.")
+
+(defun scratchpad-handle-window-destroy (window)
+  (setf *scratch-floats* (delete window *scratch-floats*
+                                 :key #'cdr)))
+
+(remove-hook *destroy-window-hook* #'scratchpad-handle-window-destroy)
+(add-hook *destroy-window-hook* #'scratchpad-handle-window-destroy)
+
+(defun resize-by-gravity (window gravity)
+  (let* ((screen (current-screen))
+         (screen-x (stumpwm::screen-x screen))
+         (screen-y (stumpwm::screen-y screen))
+         (screen-width (stumpwm::screen-width screen))
+         (screen-height (stumpwm::screen-height screen))
+
+         (x-min (- screen-x stumpwm::*float-window-title-height*))
+         (x-max (- (+ screen-x screen-width) stumpwm::*float-window-border*))
+
+         (y-min (- screen-y stumpwm::*float-window-border*))
+         (y-max (- (+ screen-y screen-height) stumpwm::*float-window-border*))
+
+         (new-x-min x-min)
+         (new-x-max x-max)
+         (new-y-min y-min)
+         (new-y-max y-max))
+    (when (member gravity '(:top :top-right :top-left))
+      (decf new-y-max (floor (/ (- y-max y-min) 2))))
+
+    (when (member gravity '(:bottom :bottom-right :bottom-left))
+      (incf new-y-min (floor (/ (- y-max y-min) 2))))
+
+    (when (member gravity '(:left :top-left :bottom-left))
+      (decf new-x-max (floor (/ (- x-max x-min) 2))))
+
+    (when (member gravity '(:right :top-right :bottom-right))
+      (incf new-x-min (floor (/ (- x-max x-min) 2))))
+
+    (when (eq gravity :center)
+      (decf new-y-max (floor (/ (- y-max y-min) 4)))
+      (incf new-y-min (floor (/ (- y-max y-min) 4)))
+
+      (incf new-x-min (floor (/ (- x-max x-min) 4)))
+      (decf new-x-max (floor (/ (- x-max x-min) 4))))
+
+    (stumpwm::float-window-move-resize window
+                                       :x new-x-min :y new-y-min
+                                       :width (- new-x-max new-x-min)
+                                       :height (- new-y-max new-y-min))))
+
+(defcommand scratchpad-float (name cmd gravity) ((:string "Name: ")
+                                                 (:string "Command: ")
+                                                 (:gravity "Side: "))
+  (let ((found (member name *scratch-floats*
+                       :key #'car
+                       :test #'string=)))
+    (cond (found
+           (let ((window (cdr (car found))))
+             (cond ((eq (current-window) window)
+                    (stumpwm::hide-window window))
+                   ((stumpwm::window-in-current-group-p window)
+                    (focus-window window t))
+                   (t
+                    (move-window-to-group window (current-group))
+                    (focus-window window t)))))
+          (t
+           (hfj:with-new-window (window cmd)
+             :init
+             (push (cons name window) *scratch-floats*)
+             :config
+             (stumpwm::float-window window (current-group))
+             (resize-by-gravity window gravity))))))
