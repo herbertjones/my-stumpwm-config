@@ -1,6 +1,9 @@
 (in-package :hfj)
 (ql:quickload "str")
-(export '(add-menu-item))
+(export '(add-menu-item
+          def-menu-command
+          defapp
+          defutil))
 
 (defparameter *default-menu-name* "Menu")
 
