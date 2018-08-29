@@ -19,13 +19,43 @@
     ("Reload RC" loadrc)))
 
 (defun data-is-submenu-p (data)
-  (consp data))
+  (listp data))
 
 (defun menu-item-name (row)
   (first row))
 
 (defun menu-item-data (row)
   (second row))
+
+(defun walk-menu (menu on-descend on-leaf on-ascend)
+  "Walk a menu.
+on-descend takes sub-menu.
+on-leaf takes leaf.
+on-ascend takes list of results of on-leaf and on-ascend from children."
+  (loop for row in menu
+        for data = (descend-data (menu-item-data row))
+        collect (cond ((data-is-submenu-p data)
+                       (funcall on-descend data)
+                       (funcall on-ascend (walk-menu data on-descend on-leaf on-ascend)))
+                      (t
+                       (funcall on-leaf data)))))
+
+(defun menu-item-count (menu)
+  "Determine how many items are in a menu.  Includes sub-menus."
+  (reduce #'+ (walk-menu menu
+                         #'(lambda (submenu)
+                             (declare (ignore submenu)))
+                         #'(lambda (leaf)
+                             (if leaf 1 0))
+                         #'(lambda (results) (reduce #'+ results)))))
+
+(defun remove-empty-submenus (menu)
+  "Skip any sub-menus that are empty."
+  (loop for row in menu
+        for data = (descend-data (menu-item-data row))
+        when (or (not (data-is-submenu-p data))
+                 (< 0 (menu-item-count data)))
+          collect row))
 
 (defun append-menu-names (title menu)
   "Convert menu of two items per row two three, where first is a pretty title."
@@ -73,7 +103,7 @@
   "Present menu to user."
   (let ((selection
           (let* ((title (str:join "/" (reverse path)))
-                 (smenu (sort (append-menu-names title menu)
+                 (smenu (sort (append-menu-names title (remove-empty-submenus menu))
                               #'(lambda (a b)
                                   (string-lessp (second a)
                                                 (second b)))))
