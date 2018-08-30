@@ -1,0 +1,141 @@
+#+TITLE: My StumpWM Config
+
+* Summary
+This is my StumpWM personal config.  Do what you want with it.  Summary of its contents follows.
+* Files
+** preload/local
+*** after-load-conf
+This allows me to write system specific hooks to customize StumpWM inside of =local.lisp=.
+
+#+BEGIN_SRC lisp
+  (in-package :hfj)
+
+  (after-load-conf ("clean.lisp")
+    (message "clean.lisp has been processed!"))
+#+END_SRC
+** clean
+Removes the various hooks I use so I don't have left-over hooks that are called after I've done a "loadrc".
+** debug
+*** my-debug
+Simple logging to a specific file.
+
+#+BEGIN_SRC lisp
+  (my-debug "Window:" window "Frame:" frame)
+#+END_SRC
+** menu
+Menu on =super-o=.  Has wrappers for ~defcommand~ to add commands to the menu when they are defined.
+
+For example, I can add a "Browser" under "Apps" in the default menu.
+#+BEGIN_SRC lisp
+  (defapp run-firefox () () ("Browser")
+    "Run Firefox"
+    (run-or-raise "firefox-bin" '(:class "Firefox")))
+#+END_SRC
+
+I can add a program that disables the touchpad under "Utility" in the default menu.
+#+BEGIN_SRC lisp
+  (defutil toggle-touchpad () () ("Toggle touchpad")
+    "Enable/Disable touchpad"
+    (run-shell-command "toggle-touchpad"))
+#+END_SRC
+
+Or to any menu I've defined with any level of sub-menus.
+#+BEGIN_SRC lisp
+  (def-menu-command pick-me-command () () (*default-menu* "Top" "Middle" "Pick Me!")
+    "Example!"
+    (message "Picked!"))
+#+END_SRC
+
+Even comes with a StumpWM menu for reloading, restarting, and starting/stopping swank.
+** emacs
+Commands to start and stop swank.
+** window
+*** with-new-window
+Macro to start a process and capture its window and modify it.
+
+Sample from scratchpad.lisp:
+#+BEGIN_SRC lisp
+  (hfj:with-new-window (window cmd)
+               :new
+               (push (cons name window) *scratch-floats*)
+               :focus
+               (stumpwm::float-window window (current-group))
+               (cond (initial-gravity
+                      (resize-by-gravity window initial-gravity ratio))))
+#+END_SRC
+
+Example to float an xterm:
+#+BEGIN_SRC lisp
+  (with-new-window (window "xterm")
+    (stumpwm::float-window window (current-group))
+    (stumpwm::float-window-move-resize window
+                                       :x 50 :y 70
+                                       :width 540 :height 400))
+#+END_SRC
+** scratchpad
+Create a "scratchpad" that can be toggled with a single keypress.  Two variants exist, to present the window tiled or floating.  I haven't finished tweaking these yet, so don't expect them to work perfectly yet.
+*** toggle-split-scratchpad
+Show a window in a frame above, below, left or right of the current frame.  Splits with =*default-split-ratio*= by default.  Uses gravity to determine the split.  Corner gravity will pick the shorter of the two sides to place the split.
+
+Example:
+#+BEGIN_SRC lisp
+  (defcommand scratchpad-test () ()
+    (scratchpad::toggle-split-scratchpad "my-xterm" "xterm"
+                                         :gravity :top-right
+                                         :ratio 1/3))
+#+END_SRC
+*** toggle-floating-scratchpad
+Floats a window on the current screen based on gravity.  Splits with =*default-float-ratio*= by default.  Also has a command ~scratchpad-float~.
+
+Examples:
+#+BEGIN_SRC lisp
+  (defcommand scratchpad-test () ()
+    (scratchpad::toggle-split-scratchpad "my-xterm" "xterm"
+                                         :gravity :center
+                                         :ratio 1/3))
+#+END_SRC
+
+#+BEGIN_SRC lisp
+  (define-key *top-map* (kbd "s-TAB") "scratchpad-float yakyak-scratch yakyak left")
+#+END_SRC
+** applications
+Various applications.  Uses ~defapp~ and ~defutil~ to place commands directly into the menu.
+
+Also has functions to start named instances of tmux and emacs.  This way I can type =s-a e e= and get an instance of emacs named "e" and I can raise it quickly with the same keypresses.  Or =s-a e r= for one named "r".  Makes it easy to switch back to or between instances of emacs.
+** groups
+Group setup.  Needs to better integrate with ~after-load-conf~ so I don't setup groups I don't care about on user accounts that don't need those default groups.
+** session
+A menu on =s-q= for logging out and shutting down.  I should probably move this over to the main menu.
+** binds
+Bindings.  Uses some convenience functions to simplify maintenance.
+
+#+BEGIN_SRC lisp
+  (alist-define-keys *top-map*
+                     '(("s-h" . "move-focus left")
+                       ("s-j" . "move-focus down")
+                       ("s-k" . "move-focus up")
+                       ("s-l" . "move-focus right")))
+
+  ;; Create and initialize a set of bindings off "s-f".
+  (alist-define-keys (create-map *frame-map* "s-f")
+                     '(("f" . "frame-windowlist")
+                       ("s-f" . "fother")
+                       ("n" . "next-in-frame")
+                       ("p" . "prev-in-frame")
+                       ("e" . "fclear")
+                       ("m" . "only")
+                       ("=" . "balance-frames")))
+
+  ;; Or one off "s-w m"
+  (alist-define-keys (create-map *window-move-map* "m" :on *window-map*)
+                     '(("h" . "move-window left")  ;; That is, "s-w m h"
+                       ("j" . "move-window down")
+                       ("k" . "move-window up")
+                       ("l" . "move-window right")))
+#+END_SRC
+** mouse
+Setup the mouse to stay on current window by jumping to any window that is focused.  This will hopefully be removed as I've submitted a PR of an improved version to StumpWM.
+** border
+For styles which I haven't really gotten around to messing with yet.
+** mode-line
+Basic mode line config.
