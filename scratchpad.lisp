@@ -2,6 +2,7 @@
 (defpackage scratchpad
   (:use :cl :stumpwm)
   (:export #:*default-split-ratio*
+           #:*default-float-ratio*
            #:toggle-split-scratchpad
            #:toggle-floating-scratchpad))
 (in-package :scratchpad)
