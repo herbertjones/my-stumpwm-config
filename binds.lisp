@@ -31,6 +31,10 @@
 
                      ("s-b" . "fullscreen")
 
+                     ("s-TAB" . "grouplist")
+                     ("M-TAB" . "windowlist-all")
+                     ("C-TAB" . "windowlist")
+
                      ("s-n" . "next-in-frame")
                      ("s-p" . "prev-in-frame")
 
@@ -169,4 +173,5 @@
            (define-key *applications-emacs* key action)))
 
 (define-key stumpwm:*menu-map* (kbd "TAB") 'menu-down)
-(define-key stumpwm:*menu-map* (kbd "M-TAB") 'menu-up)
+(define-key stumpwm:*menu-map* (kbd "M-TAB") 'menu-down)
+(define-key stumpwm:*menu-map* (kbd "s-TAB") 'menu-up)
