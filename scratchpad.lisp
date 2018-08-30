@@ -1,12 +1,35 @@
 (in-package :cl-user)
 (defpackage scratchpad
   (:use :cl :stumpwm)
-  (:export #:scratchpad-toggle
-           #:*default-ratio*
-           #:scratchpad-float))
+  (:export #:*default-split-ratio*
+           #:toggle-split-scratchpad
+           #:toggle-floating-scratchpad))
 (in-package :scratchpad)
 
-(defvar *default-ratio* 1/2)
+(defvar *default-split-ratio* 1/2)
+
+(defvar *default-float-ratio* 1/2)
+
+(defvar *scratch-floats* '()
+  "Alist of names to windows for float scratchpads.")
+
+(defun scratchpad-handle-float-window-destroy (window)
+  (setf *scratch-floats* (delete window *scratch-floats*
+                                 :key #'cdr)))
+
+(remove-hook *destroy-window-hook* #'scratchpad-handle-float-window-destroy)
+(add-hook *destroy-window-hook* #'scratchpad-handle-float-window-destroy)
+
+(defvar *scratch-splits* '()
+  "Alist of names to windows for split scratchpads.")
+
+(defun scratchpad-handle-split-window-destroy (window)
+  (setf *scratch-splits* (delete window *scratch-splits*
+                                 :key #'cdr)))
+
+(remove-hook *destroy-window-hook* #'scratchpad-handle-split-window-destroy)
+(add-hook *destroy-window-hook* #'scratchpad-handle-split-window-destroy)
+
 
 (defun maybe-remove-old-split (moved-from-group moved-from-frame)
   "Remove old frame if empty."
@@ -49,11 +72,11 @@
     (stumpwm::focus-frame group target-frame)
     (stumpwm::sync-all-frame-windows group)))
 
-(defun scratchpad-toggle (props &key cmd
-                              (ratio *default-ratio*)
-                              (direction '(:below :right))
-                              (all-groups *run-or-raise-all-groups*)
-                              (all-screens *run-or-raise-all-screens*))
+(defun split-toggle (props &key cmd
+                         (ratio *default-split-ratio*)
+                         (direction '(:below :right))
+                         (all-groups *run-or-raise-all-groups*)
+                         (all-screens *run-or-raise-all-screens*))
   "Display a window in the current group, splitting or focusing.
 
 Direction can be one of: :above :below :left :right
@@ -94,60 +117,56 @@ in the current frame or by whatever rules have been set for new windows.
                                             moved-from-group
                                             moved-from-frame))))))))
 
-(defvar *scratch-floats* '()
-  "Alist of names to windows.")
-
-(defun scratchpad-handle-window-destroy (window)
-  (setf *scratch-floats* (delete window *scratch-floats*
-                                 :key #'cdr)))
-
-(remove-hook *destroy-window-hook* #'scratchpad-handle-window-destroy)
-(add-hook *destroy-window-hook* #'scratchpad-handle-window-destroy)
-
-(defun resize-by-gravity (window gravity)
+(defun resize-by-gravity (window gravity ratio)
   (let* ((screen (current-screen))
          (screen-x (stumpwm::screen-x screen))
          (screen-y (stumpwm::screen-y screen))
          (screen-width (stumpwm::screen-width screen))
          (screen-height (stumpwm::screen-height screen))
 
-         (x-min (- screen-x stumpwm::*float-window-title-height*))
-         (x-max (- (+ screen-x screen-width) stumpwm::*float-window-border*))
+         (x-min screen-x)
+         (x-max (- (+ screen-x screen-width)
+                   (* 2 stumpwm::*float-window-border*)))
 
-         (y-min (- screen-y stumpwm::*float-window-border*))
-         (y-max (- (+ screen-y screen-height) stumpwm::*float-window-border*))
+         (y-min screen-y)
+         (y-max (- (+ screen-y screen-height)
+                   stumpwm::*float-window-title-height*
+                   stumpwm::*float-window-border*))
 
          (new-x-min x-min)
          (new-x-max x-max)
          (new-y-min y-min)
-         (new-y-max y-max))
+         (new-y-max y-max)
+         (x-width (- x-max x-min))
+         (x-ratio-length (- x-width (floor (* x-width ratio))))
+         (y-width (- y-max y-min))
+         (y-ratio-length (- y-width (floor (* y-width ratio)))))
     (when (member gravity '(:top :top-right :top-left))
-      (decf new-y-max (floor (/ (- y-max y-min) 2))))
+      (decf new-y-max y-ratio-length))
 
     (when (member gravity '(:bottom :bottom-right :bottom-left))
-      (incf new-y-min (floor (/ (- y-max y-min) 2))))
+      (incf new-y-min y-ratio-length))
 
     (when (member gravity '(:left :top-left :bottom-left))
-      (decf new-x-max (floor (/ (- x-max x-min) 2))))
+      (decf new-x-max x-ratio-length))
 
     (when (member gravity '(:right :top-right :bottom-right))
-      (incf new-x-min (floor (/ (- x-max x-min) 2))))
+      (incf new-x-min x-ratio-length))
 
     (when (eq gravity :center)
-      (decf new-y-max (floor (/ (- y-max y-min) 4)))
-      (incf new-y-min (floor (/ (- y-max y-min) 4)))
+      (decf new-y-max (floor (/ y-ratio-length 2)))
+      (incf new-y-min (floor (/ y-ratio-length 2)))
 
-      (incf new-x-min (floor (/ (- x-max x-min) 4)))
-      (decf new-x-max (floor (/ (- x-max x-min) 4))))
+      (incf new-x-min (floor (/ x-ratio-length 2)))
+      (decf new-x-max (floor (/ x-ratio-length 2))))
 
     (stumpwm::float-window-move-resize window
                                        :x new-x-min :y new-y-min
-                                       :width (- new-x-max new-x-min)
-                                       :height (- new-y-max new-y-min))))
+                                       :width (- new-x-max new-x-min 1)
+                                       :height (- new-y-max new-y-min 1))))
 
-(defcommand scratchpad-float (name cmd gravity) ((:string "Name: ")
-                                                 (:string "Command: ")
-                                                 (:gravity "Side: "))
+(defun toggle-floating-scratchpad (name cmd &key initial-gravity (ratio *default-float-ratio*))
+  "Create a named scratchpad."
   (let ((found (member name *scratch-floats*
                        :key #'car
                        :test #'string=)))
@@ -166,4 +185,11 @@ in the current frame or by whatever rules have been set for new windows.
              (push (cons name window) *scratch-floats*)
              :config
              (stumpwm::float-window window (current-group))
-             (resize-by-gravity window gravity))))))
+             (cond (initial-gravity
+                    (resize-by-gravity window initial-gravity ratio))))))))
+
+(defcommand scratchpad-float (name cmd gravity) ((:string "Name: ")
+                                                 (:string "Command: ")
+                                                 (:gravity "Side: "))
+  (toggle-floating-scratchpad name cmd
+                              :initial-gravity gravity))
