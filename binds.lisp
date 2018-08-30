@@ -167,3 +167,6 @@
       do (let ((key (kbd (string c)))
                (action (format nil "display-named-emacs ~C" c)))
            (define-key *applications-emacs* key action)))
+
+(define-key stumpwm:*menu-map* (kbd "TAB") 'menu-down)
+(define-key stumpwm:*menu-map* (kbd "M-TAB") 'menu-up)
