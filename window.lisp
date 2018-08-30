@@ -85,14 +85,18 @@
 (defmacro with-new-window ((window cmd &key properties (timeout 30))
                            &body body)
   "Execute command, on next new window matching properties, run the body.  If no
-properties given, next new window will be acted on."
+properties given, next new window will be acted on.
+
+By default, code will run in *focus-window-hook* handler, but can also run in
+*new-window-hook* handler by using keyword :new.  Return to focus hook with
+:focus."
   (let ((state 'config)
         (init '())
         (config '()))
     (map nil #'(lambda (e)
                  (case e
-                   (:config (setf state 'config))
-                   (:init (setf state 'init))
+                   (:focus (setf state 'config))
+                   (:new (setf state 'init))
                    (t (ecase state
                         (init (push e init))
                         (config (push e config))))))

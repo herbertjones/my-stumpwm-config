@@ -175,7 +175,7 @@
                                           moved-from-frame)))))
           (t
            (hfj:with-new-window (window cmd)
-             :init
+             :new
              (push (cons name window) *scratch-splits*))))))
 
 (defun toggle-floating-scratchpad (name cmd &key initial-gravity (ratio *default-float-ratio*))
@@ -199,9 +199,9 @@
                     (focus-window window t)))))
           (t
            (hfj:with-new-window (window cmd)
-             :init
+             :new
              (push (cons name window) *scratch-floats*)
-             :config
+             :focus
              (stumpwm::float-window window (current-group))
              (cond (initial-gravity
                     (resize-by-gravity window initial-gravity ratio))))))))
