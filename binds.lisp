@@ -31,9 +31,6 @@
 
                      ("s-b" . "fullscreen")
 
-                     ("s-z" . "gprev")
-                     ("s-x" . "gnext")
-
                      ("s-n" . "next-in-frame")
                      ("s-p" . "prev-in-frame")
 
