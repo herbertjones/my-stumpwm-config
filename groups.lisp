@@ -7,4 +7,4 @@
 
 (when (consp *frame-preferences*)
   (loop for (name . prefs) in *frame-preferences*
-        do `(define-frame-preference name ,@prefs)))
+        do (eval `(define-frame-preference ,name ,@prefs))))
