@@ -13,6 +13,7 @@
 (awhen (probe-file (uiop:subpathname* *config-path* "local.lisp"))
   (load it))
 (load-conf "clean.lisp")
+(load-conf "defaults.lisp")
 (load-conf "debug.lisp")
 (load-conf "menu.lisp")
 (load-conf "emacs.lisp")

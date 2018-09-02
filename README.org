@@ -15,6 +15,12 @@ This allows me to write system specific hooks to customize StumpWM inside of =lo
 #+END_SRC
 ** clean
 Removes the various hooks I use so I don't have left-over hooks that are called after I've done a "loadrc".
+** defaults
+Add an =after-load-conf= hook to override these.
+*** *group-names*
+List of group names to be created.
+*** *frame-preferences*
+List of preferences to pass to define-frame-preference.
 ** debug
 *** my-debug
 Simple logging to a specific file.
@@ -103,7 +109,7 @@ Various applications.  Uses ~defapp~ and ~defutil~ to place commands directly in
 
 Also has functions to start named instances of tmux and emacs.  This way I can type =s-a e e= and get an instance of emacs named "e" and I can raise it quickly with the same keypresses.  Or =s-a e r= for one named "r".  Makes it easy to switch back to or between instances of emacs.
 ** groups
-Group setup.  Needs to better integrate with ~after-load-conf~ so I don't setup groups I don't care about on user accounts that don't need those default groups.
+Set up groups and preferences defined in defaults.lisp.
 ** session
 A menu on =s-q= for logging out and shutting down.  I should probably move this over to the main menu.
 ** binds
