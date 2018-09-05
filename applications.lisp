@@ -60,31 +60,30 @@
   "Enable/Disable touchpad"
   (run-shell-command "toggle-touchpad"))
 
-(flet ((emacs-name-plist (&optional name)
-         (let* ((title (if (and name (stringp name) (< 0 (length name)))
-                           (format nil "Emacs! ~A" name)
-                           (format nil "Emacs!")))
-                (cmd (format nil "/usr/bin/emacs --title ~S --name ~S" title title)))
-           (list :title title
-                 :cmd cmd))))
-  (defapp run-emacs (&optional (name "Main")) ((:string "Name: ")) ("Emacs")
-    "Run Emacs"
-    (let ((plist (emacs-name-plist name)))
-      (run-or-raise (getf plist :cmd) `(:title ,(getf plist :title))))))
-
-(flet ((emacsclient-name-plist (name)
+(flet ((emacs-daemon-running-p ()
+         "Determine if emacs daemon running."
+         (when-let ((output (run-shell-command "emacsclient --eval t" t)))
+           (string= "t" (str:trim output))))
+       (emacs-name-plist (name)
          (let* ((title (format nil "Emacs - ~A" name))
                 (name-str (format nil "(name . ~S)" title))
                 (title-str (format nil "(title . ~S)" title))
                 (form (format nil "(~A ~A)" name-str title-str))
                 (args (list "/usr/bin/emacsclient" "-c" "-F" (string-escape form)))
-                (cmd (str:join " " args)))
+                (client-cmd (str:join " " args))
+                (non-client-cmd (format nil "/usr/bin/emacs --title ~S --name ~S" title title)))
            (list :title title
-                 :cmd cmd))))
-  (defapp display-named-emacsclient (name) ((:string "Name: ")) ("Emacsclient")
+                 :client-cmd client-cmd
+                 :non-client-cmd non-client-cmd))))
+  (defapp display-named-emacs (name &optional force-serverless)
+      ((:string "Name: ") (:y-or-n "Force server-less: "))
+      ("Emacs")
     "Raise emacs frame with given name"
-    (let ((plist (emacsclient-name-plist name)))
-      (run-or-raise (getf plist :cmd) `(:title ,(getf plist :title))))))
+    (let ((plist (emacs-name-plist name)))
+      (if (and (not force-serverless)
+               (emacs-daemon-running-p))
+          (run-or-raise (getf plist :client-cmd) `(:title ,(getf plist :title)))
+          (run-or-raise (getf plist :non-client-cmd) `(:title ,(getf plist :title)))))))
 
 (defapp run-yakyak () () ("IM")
   "Run Yakyak"

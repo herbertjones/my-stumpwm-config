@@ -159,18 +159,22 @@
 (alist-define-keys (create-map *applications-map* "s-a")
                    '(("f" . "run-firefox")
                      ("c" . "run-chrome")
-                     ("E" . "run-emacs")
                      ("k" . "run-keepassxc")
                      ("t" . "run-named-terminal main")
                      ("m" . "run-thunderbird")
                      ("y" . "run-yakyak")))
 
 (alist-define-keys (create-map *applications-emacs* "e" :on *applications-map*)
-                   '(("e" . "display-named-emacsclient main")))
+                   '(("e" . "display-named-emacs main n")
+                     ("E" . "display-named-emacs main y")))
 
 (loop for c across "abcdfghijklmnopqrstuvwxyz0123456789"
       do (let ((key (kbd (string c)))
-               (action (format nil "display-named-emacsclient ~C" c)))
+               (action (format nil "display-named-emacs ~C n" c)))
+           (define-key *applications-emacs* key action)))
+(loop for c across "ABCDFGHIJKLMNOPQRSTUVWXYZ"
+      do (let ((key (kbd (string c)))
+               (action (format nil "display-named-emacs ~C y" (char-downcase c))))
            (define-key *applications-emacs* key action)))
 
 (define-key stumpwm:*menu-map* (kbd "TAB") 'menu-down)
