@@ -2,7 +2,7 @@
 (ql:quickload "anaphora")
 (in-package :cl-user)
 (defpackage hfj
-  (:use :cl :stumpwm :anaphora))
+  (:use :cl :stumpwm :alexandria :anaphora))
 (in-package :hfj)
 
 (set-module-dir (uiop:subpathname* (user-homedir-pathname) "opt/stumpwm/contrib/"))
