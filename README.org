@@ -140,7 +140,7 @@ Bindings.  Uses some convenience functions to simplify maintenance.
                        ("l" . "move-window right")))
 #+END_SRC
 ** mouse
-Setup the mouse to stay on current window by jumping to any window that is focused.  This will hopefully be removed as I've submitted a PR of an improved version to StumpWM.
+Just setup the mouse preferences.
 ** border
 For styles which I haven't really gotten around to messing with yet.
 ** mode-line
