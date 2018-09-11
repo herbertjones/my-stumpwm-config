@@ -140,7 +140,7 @@ Bindings.  Uses some convenience functions to simplify maintenance.
                        ("l" . "move-window right")))
 #+END_SRC
 ** mouse
-Just setup the mouse preferences.
+Set focus to follow the mouse, and the mouse to follow focus.
 ** border
 For styles which I haven't really gotten around to messing with yet.
 ** mode-line
