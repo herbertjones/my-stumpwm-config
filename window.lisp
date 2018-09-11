@@ -54,7 +54,7 @@
 (defun run-and-act-on-new-window (cmd props timeout on-create-f on-focus-f)
   "Run a command, setup a handler to apply a function to the new window once it's open."
   (let* (focus-window-handler
-         timeout-handler
+         new-window-handler
          (timer (run-with-timer timeout nil
                                 #'(lambda ()
                                     ;; Remove hooks after period of time should something go wrong.
