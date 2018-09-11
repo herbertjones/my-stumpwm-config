@@ -34,7 +34,7 @@
                      ("s-TAB" . "grouplist")
                      ("M-TAB" . "windowlist-all")
 
-                     ("s-m" . "banish")
+                     ("s-m" . "banish window")
 
                      ("s-n" . "next-in-frame")
                      ("s-p" . "prev-in-frame")
