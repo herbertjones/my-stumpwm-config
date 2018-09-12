@@ -8,7 +8,7 @@
    enable))
 (in-package :mouse-follow)
 
-(setf *mouse-focus-policy* :sloppy)
+(setf *mouse-focus-policy* :click)
 
 (defvar *mouse-follow-banish-x-offset* -15
   "Negative values mean position from the right.")
@@ -40,9 +40,11 @@ hasn't been moved by other means since then."
         (xlib:global-pointer-position *display*)
       (when (and (eql (last-change-mouse-x change) mouse-x)
                  (eql (last-change-mouse-y change) mouse-y))
-        (cond ((last-change-window change)
+        (cond ((and (last-change-window change)
+                    (not (mouse-inside-window-p (last-change-window change))))
                (mouse-banish-window (last-change-window change)))
-              ((last-change-frame change)
+              ((and (last-change-frame change)
+                    (not (mouse-inside-frame-p (last-change-frame change))))
                (mouse-banish-frame (last-change-frame change))))))))
 
 (defun mouse-banish-frame (frame)
@@ -75,6 +77,40 @@ hasn't been moved by other means since then."
                     (+ min-y *mouse-follow-banish-y-offset*))))
     (ratwarp (clamp new-x min-x max-x)
              (clamp new-y min-y max-y))))
+
+;; Check
+
+(defun mouse-inside-frame-p (frame)
+  "Determine if mouse already inside frame."
+  (multiple-value-bind (mouse-x mouse-y)
+      (xlib:global-pointer-position  *display*)
+    (let* ((group (current-group))
+           (min-x (frame-x frame))
+           (min-y (stumpwm::frame-display-y group frame))
+           (max-x (+ min-x (frame-width frame)))
+           (max-y (+ min-y (stumpwm::frame-display-height group frame))))
+      (and (<= min-x mouse-x max-x)
+           (<= min-y mouse-y max-y)))))
+
+(defgeneric mouse-inside-window-p (window)
+  (:documentation "Determine if mouse already inside window.")
+  (:method ((window stumpwm::float-window))
+    (multiple-value-bind (mouse-x mouse-y)
+        (xlib:global-pointer-position *display*)
+      (let* ((leniency-offset 2)
+             (x (xlib:drawable-x (window-parent window)))
+             (w (xlib:drawable-width (window-parent window)))
+             (min-x (- x stumpwm::*float-window-border* leniency-offset))
+             (max-x (+ x w stumpwm::*float-window-border* leniency-offset))
+             (y (xlib:drawable-y (window-parent window)))
+             (h (xlib:drawable-height (window-parent window)))
+             (min-y (- y stumpwm::*float-window-title-height* leniency-offset))
+             (max-y (+ y h stumpwm::*float-window-border* leniency-offset)))
+        (and (<= min-x mouse-x max-x)
+             (<= min-y mouse-y max-y)))))
+  (:method ((window stumpwm::tile-window))
+    (let ((frame (stumpwm::window-frame window)))
+      (mouse-inside-frame-p frame))))
 
 ;; Handlers
 
