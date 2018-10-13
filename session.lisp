@@ -14,7 +14,7 @@ Example:
   export SHUTDOWN_FILE=$(mktemp)
   while [[ -e $SHUTDOWN_FILE ]]; do
       echo \"Starting: $(date)\" >> ~/tmp/stumpwm.log
-      /home/herbert/opt/stumpwm/bin/stumpwm >> ~/tmp/stumpwm.log 2>&1
+      ~/opt/stumpwm/bin/stumpwm >> ~/tmp/stumpwm.log 2>&1
       status=$?
       echo \"Shutdown with: ${status} on $(date)\" >> ~/tmp/stumpwm.log
   done
