@@ -32,7 +32,6 @@
                      ("s-b" . "fullscreen")
 
                      ("s-TAB" . "grouplist")
-                     ("M-TAB" . "windowlist-all")
 
                      ("s-m" . "banish window")
 
@@ -103,7 +102,7 @@
                      ("p" . "pull-hidden-previous")
 
                      ("w" . "windowlist-all")
-                     ("s-w" . "pull-hidden-other")
+                     ("s-w" . "switch-to-previous-window")
 
                      ("g" . "gmove")
                      ("m" . "only")

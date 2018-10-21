@@ -5,6 +5,34 @@
           get-height
           with-new-window))
 
+(defvar *current-selected-window* nil)
+(defvar *last-selected-window* nil)
+(defvar *stable-focus-window-hook-timer* nil)
+
+(defun window-handle-focus-window-hook-timeout (window)
+  "Handle timeout from window-handle-focus-window-hook.  Log the current new
+stable window and move current to last."
+  (cancel-timer *stable-focus-window-hook-timer*)
+  (setq *stable-focus-window-hook-timer* nil)
+  (when (not (eq window *current-selected-window*))
+    (setq *last-selected-window* *current-selected-window*)
+    (setq *current-selected-window* window)))
+
+(defun window-handle-focus-window-hook (window last-window)
+  "Track window focus changes in order to set *last-selected-window*."
+  (declare (ignore last-window))
+  (when *stable-focus-window-hook-timer*
+    (cancel-timer *stable-focus-window-hook-timer*))
+  (setq *stable-focus-window-hook-timer*
+        (run-with-timer 0.3 nil #'window-handle-focus-window-hook-timeout window)))
+
+(defcommand switch-to-previous-window () ()
+  (when *last-selected-window*
+    (stumpwm::focus-all *last-selected-window*)
+    (rotatef *last-selected-window* *current-selected-window*)))
+
+(add-hook *focus-window-hook* #'window-handle-focus-window-hook)
+
 (defgeneric get-x (window)
   (:documentation "Generic get x position"))
 (defgeneric get-y (window)
