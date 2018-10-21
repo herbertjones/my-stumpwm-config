@@ -43,6 +43,8 @@
 
                      ("s-o" . "show-menu")
 
+                     ("s-x" . "run-shell-command")
+
                      ("s-`" . "scratchpad-float yakyak yakyak left")
 
                      ("XF86ScreenSaver" . "lock")
