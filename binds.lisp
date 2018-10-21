@@ -45,6 +45,9 @@
 
                      ("s-x" . "run-shell-command")
 
+                     ("s-z" . "mark")
+                     ("s-Z" . "gmove-marked")
+
                      ("s-`" . "scratchpad-float yakyak yakyak left")
 
                      ("XF86ScreenSaver" . "lock")
